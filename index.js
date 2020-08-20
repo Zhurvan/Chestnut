@@ -452,4 +452,4 @@ client.on('message', message => {
 });
 
 
-client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.kVrCaFyv-7PCcNu-OxNPvR1SOGc');
+client.login(TOKEN HERE);
