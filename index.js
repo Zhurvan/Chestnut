@@ -22,6 +22,14 @@ const client = new Discord.Client();
 
 client.on('ready', () => {
     console.log('Bot Started!');
+    client.user.setPresence({
+    status: 'online',
+    activity: {
+        name: '!help',
+        type: 'STREAMING',
+        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+    }
+    });
 });
 
 client.on('message', message => {
