@@ -73,7 +73,7 @@ client.on('message', message => {
         replaceStrings(n);
         let firstEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
-            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name)
+            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name + ' | ' + userQuestions[message.author.id].bonuses[n].category.name)
             .setTitle('Bonus One')
             .setDescription(userQuestions[message.author.id].bonuses[n].formatted_leadin + ' ' +
                 userQuestions[message.author.id].bonuses[n].formatted_texts[0])
@@ -125,7 +125,7 @@ client.on('message', message => {
         replaceStrings(n);
         let secondEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
-            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name)
+            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name + ' | ' + userQuestions[message.author.id].bonuses[n].category.name)
             .setTitle('Bonus Two')
             .setDescription(userQuestions[message.author.id].bonuses[n].formatted_texts[1])
             .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
@@ -176,7 +176,7 @@ client.on('message', message => {
         replaceStrings(n);
         let thirdEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
-            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name)
+            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name + ' | ' + userQuestions[message.author.id].bonuses[n].category.name)
             .setTitle('Bonus Two')
             .setDescription(userQuestions[message.author.id].bonuses[n].formatted_texts[2])
             .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
@@ -265,6 +265,28 @@ client.on('message', message => {
                     } else if (args[1].toLowerCase() == "sosc") {
                         args[1] = "social science";
                     }
+                    else if (args[1].toLowerCase() == "geo") {
+                        args[1] = "geography";
+                    }
+                    else if (args[1].toLowerCase() == "hist") {
+                        args[1] = "history";
+                    }
+                    else if (args[1].toLowerCase() == "lit") {
+                        args[1] = "literature";
+                    }
+                    else if (args[1].toLowerCase() == "myth") {
+                        args[1] = "mythology";
+                    }
+                    else if (args[1].toLowerCase() == "philo") {
+                        args[1] = "philosophy";
+                    }
+                    else if (args[0].toLowerCase() == "rel") {
+                        args[0] = "religion";
+                    }
+                    else if (args[1].toLowerCase() == "sci") {
+                        args[1] = "science";
+                    }
+
                     userQuestions[message.author.id].bonuses = []
                     questions.data.bonuses.forEach(bonus => {
                         if (bonus.category.name.toLowerCase() == args[1].toLowerCase()) {
@@ -278,6 +300,104 @@ client.on('message', message => {
                         message.channel.send('Parameters set to category ' + args[1] + '!');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
+                }
+            }
+            else if (args[0] == 'add') {
+                if(args[1] && args[2]) {
+                    if (args[1].toLowerCase() == "ce") {
+                        args[1] = "current events";
+                    } else if (args[1].toLowerCase() == "fa") {
+                        args[1] = "fine arts";
+                    } else if (args[1].toLowerCase() == "sosc") {
+                        args[1] = "social science";
+                    }
+                    else if (args[1].toLowerCase() == "geo") {
+                        args[1] = "geography";
+                    }
+                    else if (args[1].toLowerCase() == "hist") {
+                        args[1] = "history";
+                    }
+                    else if (args[1].toLowerCase() == "lit") {
+                        args[1] = "literature";
+                    }
+                    else if (args[1].toLowerCase() == "myth") {
+                        args[1] = "mythology";
+                    }
+                    else if (args[1].toLowerCase() == "philo") {
+                        args[1] = "philosophy";
+                    }
+                    else if (args[1].toLowerCase() == "rel") {
+                        args[1] = "religion";
+                    }
+                    else if (args[1].toLowerCase() == "sci") {
+                        args[1] = "science";
+                    }
+
+                    questions.data.bonuses.forEach(bonus => {
+                        if (bonus.category.name.toLowerCase() == args[1].toLowerCase() && bonus.tournament.difficulty_num == args[2]) {
+                            userQuestions[message.author.id].bonuses.push(bonus);
+                        }
+                    });
+                    if (userQuestions[message.author.id].bonuses === []) {
+                        message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
+
+                    } else {
+                        message.channel.send('Parameters set to category ' + args[1] + ' and difficulty ' + args[2] + '!');
+                        fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+                    }
+                }
+                else {
+                    message.channel.send('Please include both a category and difficulty in the command.');
+                }
+
+            }
+            else {
+                if(args[0] && args[1]) {
+                    if (args[0].toLowerCase() == "ce") {
+                        args[0] = "current events";
+                    } else if (args[0].toLowerCase() == "fa") {
+                        args[0] = "fine arts";
+                    } else if (args[0].toLowerCase() == "sosc") {
+                        args[0] = "social science";
+                    }
+                    else if (args[0].toLowerCase() == "geo") {
+                        args[0] = "geography";
+                    }
+                    else if (args[0].toLowerCase() == "hist") {
+                        args[0] = "history";
+                    }
+                    else if (args[0].toLowerCase() == "lit") {
+                        args[0] = "literature";
+                    }
+                    else if (args[0].toLowerCase() == "myth") {
+                        args[0] = "mythology";
+                    }
+                    else if (args[0].toLowerCase() == "philo") {
+                        args[0] = "philosophy";
+                    }
+                    else if (args[0].toLowerCase() == "rel") {
+                        args[0] = "religion";
+                    }
+                    else if (args[0].toLowerCase() == "sci") {
+                        args[0] = "science";
+                    }
+
+                    userQuestions[message.author.id].bonuses = []
+                    questions.data.bonuses.forEach(bonus => {
+                        if (bonus.category.name.toLowerCase() == args[0].toLowerCase() && bonus.tournament.difficulty_num == args[1]) {
+                            userQuestions[message.author.id].bonuses.push(bonus);
+                        }
+                    });
+                    if (userQuestions[message.author.id].bonuses === []) {
+                        message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
+
+                    } else {
+                        message.channel.send('Parameters set to category ' + args[0] + ' and difficulty ' + args[1] + '!');
+                        fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+                    }
+                }
+                else {
+                    message.channel.send('Please include both a category and difficulty in the command.');
                 }
             }
         }
