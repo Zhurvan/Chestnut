@@ -1,5 +1,5 @@
 const fs = require('fs');
-const stringSimilarity = require('string-similarity');
+var dice = require('dice-coefficient')
 const Discord = require('discord.js');
 const prefix = "!";
 
@@ -16,7 +16,6 @@ console.log('User Questions Loaded')
 function reloadData() {
     userFile = fs.readFileSync('./data/users.json');
     userData = JSON.parse(userFile);
-    console.log('Json Files Reloaded');
 }
 
 const client = new Discord.Client();
@@ -44,6 +43,7 @@ client.on('message', message => {
     function initUserQuestionData() {
         userQuestions[message.author.id] = {};
         userQuestions[message.author.id].bonuses = [];
+        userQuestions[message.author.id].bonuses.push(questions.data.bonuses[1]);
         userQuestions[message.author.id].bonusesTemp = [];
         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
     }
@@ -56,12 +56,12 @@ client.on('message', message => {
     }
 
     function replaceStrings(n) {
-        userQuestions[message.author.id].bonuses[n].formatted_answers[0] = userQuestions[message.author.id].bonuses[n].formatted_answers[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '');
-        userQuestions[message.author.id].bonuses[n].formatted_answers[1] = userQuestions[message.author.id].bonuses[n].formatted_answers[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '');
-        userQuestions[message.author.id].bonuses[n].formatted_answers[2] = userQuestions[message.author.id].bonuses[n].formatted_answers[2].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '');
-        userQuestions[message.author.id].bonuses[n].answers[0] = userQuestions[message.author.id].bonuses[n].answers[0].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '');
-        userQuestions[message.author.id].bonuses[n].answers[1] = userQuestions[message.author.id].bonuses[n].answers[1].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '');
-        userQuestions[message.author.id].bonuses[n].answers[2] = userQuestions[message.author.id].bonuses[n].answers[2].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '');
+        userQuestions[message.author.id].bonuses[n].formatted_answers[0] = userQuestions[message.author.id].bonuses[n].formatted_answers[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
+        userQuestions[message.author.id].bonuses[n].formatted_answers[1] = userQuestions[message.author.id].bonuses[n].formatted_answers[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
+        userQuestions[message.author.id].bonuses[n].formatted_answers[2] = userQuestions[message.author.id].bonuses[n].formatted_answers[2].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
+        userQuestions[message.author.id].bonuses[n].answers[0] = userQuestions[message.author.id].bonuses[n].answers[0].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
+        userQuestions[message.author.id].bonuses[n].answers[1] = userQuestions[message.author.id].bonuses[n].answers[1].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
+        userQuestions[message.author.id].bonuses[n].answers[2] = userQuestions[message.author.id].bonuses[n].answers[2].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
         userQuestions[message.author.id].bonuses[n].formatted_leadin = userQuestions[message.author.id].bonuses[n].formatted_leadin.replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
         userQuestions[message.author.id].bonuses[n].formatted_texts[0] = userQuestions[message.author.id].bonuses[n].formatted_texts[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
         userQuestions[message.author.id].bonuses[n].formatted_texts[1] = userQuestions[message.author.id].bonuses[n].formatted_texts[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
@@ -69,7 +69,7 @@ client.on('message', message => {
     }
 
     function firstPart() {
-        let n = Math.floor((Math.random() * (userQuestions[message.author.id].bonuses.length - 1)));
+        let n = Math.floor((Math.random() * userQuestions[message.author.id].bonuses.length));
         replaceStrings(n);
         let firstEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
@@ -85,8 +85,8 @@ client.on('message', message => {
             if (message.content == prefix + 'end') {
                 collector.stop();
             } else {
-                console.log(stringSimilarity.compareTwoStrings(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[0].toLowerCase()));
-                if (stringSimilarity.compareTwoStrings(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[0].toLowerCase()) > 0.4) {
+                console.log(dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[0].toLowerCase()));
+                if (dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[0].toLowerCase()) > 0.4) {
                     var correctEmbed = new Discord.MessageEmbed()
                         .setColor('#53d645')
                         .setTitle('Correct')
@@ -136,8 +136,8 @@ client.on('message', message => {
             if (message.content == prefix + 'end') {
                 collector.stop();
             } else {
-                console.log(stringSimilarity.compareTwoStrings(message.content, userQuestions[message.author.id].bonuses[n].answers[1].toLowerCase()));
-                if (stringSimilarity.compareTwoStrings(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[1].toLowerCase()) > 0.4) {
+                console.log(dice(message.content, userQuestions[message.author.id].bonuses[n].answers[1].toLowerCase()));
+                if (dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[1].toLowerCase()) > 0.4) {
                     var correctEmbed = new Discord.MessageEmbed()
                         .setColor('#53d645')
                         .setTitle('Correct')
@@ -187,8 +187,8 @@ client.on('message', message => {
             if (message.content == prefix + 'end') {
                 collector.stop();
             } else {
-                console.log(stringSimilarity.compareTwoStrings(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[2].toLowerCase()));
-                if (stringSimilarity.compareTwoStrings(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[2].toLowerCase()) > 0.4) {
+                console.log(dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[2].toLowerCase()));
+                if (dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[2].toLowerCase()) > 0.4) {
                     var correctEmbed = new Discord.MessageEmbed()
                         .setColor('#53d645')
                         .setTitle('Correct')
@@ -224,53 +224,64 @@ client.on('message', message => {
     }
 
     if (commandText == 'params') {
-      if(userData[message.author.id].playing === 'yes') {
-        message.channel.send("You can't change parameters while inside a pk!");
-      }
-      else {
-        if (args[0] == 'reset') {
-            userQuestions[message.author.id].bonuses = [];
-            userQuestions[message.author.id].bonusesTemp = [];
-            message.channel.send('Parameters reset!');
-            fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
-        } else if (args[0] == 'all') {
-            userQuestions[message.author.id].bonuses = questions.data.bonuses;
-            message.channel.send('Parameters set to all questions!');
-            fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
-        } else if (args[0] == 'diff') {
-            if (!args[1]) {
-                message.channel.send('Please add a difficulty (from 1 to 2) after the command');
-            } else if (args[1]) {
-                userQuestions[message.author.id].bonuses = []
-                questions.data.bonuses.forEach(bonus => {
-                    if (bonus.tournament.difficulty_num == args[1]) {
-                        userQuestions[message.author.id].bonuses.push(bonus);
+        if (userData[message.author.id].playing === 'yes') {
+            message.channel.send("You can't change parameters while inside a pk!");
+        } else {
+            if (args[0] == 'reset') {
+                userQuestions[message.author.id].bonuses = [];
+                userQuestions[message.author.id].bonusesTemp = [];
+                message.channel.send('Parameters reset!');
+                fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+            } else if (args[0] == 'all') {
+                userQuestions[message.author.id].bonuses = questions.data.bonuses;
+                message.channel.send('Parameters set to all questions!');
+                fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+            } else if (args[0] == 'diff') {
+                if (!args[1]) {
+                    message.channel.send('Please add a difficulty (from 1 to 2) after the command');
+                } else if (args[1]) {
+                    userQuestions[message.author.id].bonuses = []
+                    questions.data.bonuses.forEach(bonus => {
+                        if (bonus.tournament.difficulty_num == args[1]) {
+                            userQuestions[message.author.id].bonuses.push(bonus);
+                        }
+                    });
+                    if (userQuestions[message.author.id].bonuses === []) {
+                        message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
+
+                    } else {
+                        message.channel.send('Parameters set to difficulty ' + args[1] + '!');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
-                });
-                message.channel.send('Parameters set to difficulty ' + args[1] + '!');
-            }
-        } else if (args[0] == 'cat') {
-            if (!args[1]) {
-                message.channel.send('Please add a category after the command');
-            } else if (args[1]) {
-                if (args[1].toLowerCase() == "ce") {
-                    args[1] = "current events";
-                } else if (args[1].toLowerCase() == "fa") {
-                    args[1] = "fine arts";
                 }
-                userQuestions[message.author.id].bonuses = []
-                questions.data.bonuses.forEach(bonus => {
-                    if (bonus.category.name.toLowerCase() == args[1].toLowerCase()) {
-                        userQuestions[message.author.id].bonuses.push(bonus);
+            } else if (args[0] == 'cat') {
+                if (!args[1]) {
+                    message.channel.send('Please add a category after the command');
+                } else if (args[1]) {
+                    if (args[1].toLowerCase() == "ce") {
+                        args[1] = "current events";
+                    } else if (args[1].toLowerCase() == "fa") {
+                        args[1] = "fine arts";
+                    } else if (args[1].toLowerCase() == "sosc") {
+                        args[1] = "social science";
+                    }
+                    userQuestions[message.author.id].bonuses = []
+                    questions.data.bonuses.forEach(bonus => {
+                        if (bonus.category.name.toLowerCase() == args[1].toLowerCase()) {
+                            userQuestions[message.author.id].bonuses.push(bonus);
+                        }
+                    });
+                    if (userQuestions[message.author.id].bonuses === []) {
+                        message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
+
+                    } else {
+                        message.channel.send('Parameters set to category ' + args[1] + '!');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
-                });
-                message.channel.send('Parameters set to category ' + args[1] + '!');
+                }
             }
         }
     }
-  }
 
     if (commandText == 'test') {
         var eembed = new Discord.MessageEmbed()
@@ -279,20 +290,33 @@ client.on('message', message => {
     }
 
     if (commandText == "pk") {
-        if (userData[message.author.id].playing === "yes") {
-            message.channel.send("You're already in a pk!");
-        } else if (userData[message.author.id].playing === "no") {
-            userData[message.author.id].playing = "yes";
-            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-            firstPart();
+        if (args[0]) {
+            message.channel.send("Try just `!pk` instead. Don't forget to set parameters with `!params` beforehand!");
+        } else {
+            if (userQuestions[message.author.id].bonuses.length) {
+                if (userData[message.author.id].playing === "yes") {
+                    message.channel.send("You're already in a pk!");
+                } else if (userData[message.author.id].playing === "no") {
+                    userData[message.author.id].playing = "yes";
+                    fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                    firstPart();
+                }
+            }
+            else {
+                message.channel.send("It looks like you don't have any bonuses selected. Try selecting some with `!params`")
+            }
         }
     }
 
     if (commandText == 'end') {
         if (userData[message.author.id].playing === "yes") {
+            let ppb = userData[message.author.id].points / userData[message.author.id].parts * 3;
+            if (isNaN(ppb)) {
+                ppb = 0;
+            }
             var endEmbed = new Discord.MessageEmbed()
                 .setTitle('Pk ended')
-                .setDescription(userData[message.author.id].points / userData[message.author.id].parts * 3 + ' ppg')
+                .setDescription(Math.round(ppb   * 100) / 100 + ' ppb')
             message.channel.send(endEmbed);
             userData[message.author.id].points = 0;
             userData[message.author.id].parts = 0;
@@ -303,7 +327,8 @@ client.on('message', message => {
             message.channel.send("You're not in a pk.")
         }
     }
-});
+})
+;
 
 
 client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.kVrCaFyv-7PCcNu-OxNPvR1SOGc');
