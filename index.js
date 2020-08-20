@@ -452,4 +452,4 @@ client.on('message', message => {
 });
 
 
-client.login(TOKEN HERE);
+client.login(token);
