@@ -403,10 +403,12 @@ client.on('message', message => {
         }
     }
 
-    if (commandText == 'test') {
-        var eembed = new Discord.MessageEmbed()
-            .setDescription('**' + 'hit' + '**')
-        message.channel.send(eembed);
+    if (commandText == 'help') {
+        var helpEmbed = new Discord.MessageEmbed()
+            .setTitle('Commands')
+            .setDescription('[`!help`](https://github.com/Bubblebyb/pk-bot/wiki/Help): Gives a list of commands \n [`!params`](https://github.com/Bubblebyb/pk-bot/wiki/Parameters): Sets a filter and selects bonuses for a pk \n [`!pk`](https://github.com/Bubblebyb/pk-bot/wiki/pk): Starts the pk \n [`!end`](https://github.com/Bubblebyb/pk-bot/wiki/End): Ends the pk')
+            .setFooter('Click on any of the commands to go to their wiki page')
+        message.channel.send(helpEmbed);
     }
 
     if (commandText == "pk") {
@@ -447,8 +449,7 @@ client.on('message', message => {
             message.channel.send("You're not in a pk.")
         }
     }
-})
-;
+});
 
 
 client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.kVrCaFyv-7PCcNu-OxNPvR1SOGc');
