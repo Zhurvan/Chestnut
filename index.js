@@ -23,18 +23,17 @@ const client = new Discord.Client();
 client.on('ready', () => {
     console.log('Bot Started!');
     client.user.setPresence({
-    status: 'online',
-    activity: {
-        name: '!help',
-        type: 'STREAMING',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-    }
+        status: 'online',
+        activity: {
+            name: '!help',
+            type: 'STREAMING',
+            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        }
     });
 });
 
 client.on('message', message => {
     const args = message.content.slice(prefix.length).split(/ +/);
-    const combinedArgs = message.content.slice(prefix.length);
     const commandText = args.shift().toLowerCase();
 
     reloadData();
@@ -63,172 +62,491 @@ client.on('message', message => {
         initUserQuestionData();
     }
 
-    function replaceStrings(n) {
-        userQuestions[message.author.id].bonuses[n].formatted_answers[0] = userQuestions[message.author.id].bonuses[n].formatted_answers[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
-        userQuestions[message.author.id].bonuses[n].formatted_answers[1] = userQuestions[message.author.id].bonuses[n].formatted_answers[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
-        userQuestions[message.author.id].bonuses[n].formatted_answers[2] = userQuestions[message.author.id].bonuses[n].formatted_answers[2].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
-        userQuestions[message.author.id].bonuses[n].answers[0] = userQuestions[message.author.id].bonuses[n].answers[0].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
-        userQuestions[message.author.id].bonuses[n].answers[1] = userQuestions[message.author.id].bonuses[n].answers[1].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
-        userQuestions[message.author.id].bonuses[n].answers[2] = userQuestions[message.author.id].bonuses[n].answers[2].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
-        userQuestions[message.author.id].bonuses[n].formatted_leadin = userQuestions[message.author.id].bonuses[n].formatted_leadin.replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
-        userQuestions[message.author.id].bonuses[n].formatted_texts[0] = userQuestions[message.author.id].bonuses[n].formatted_texts[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
-        userQuestions[message.author.id].bonuses[n].formatted_texts[1] = userQuestions[message.author.id].bonuses[n].formatted_texts[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
-        userQuestions[message.author.id].bonuses[n].formatted_texts[2] = userQuestions[message.author.id].bonuses[n].formatted_texts[2].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
+    function replaceStrings(n, selectedQuestions) {
+        selectedQuestions.bonuses[n].formatted_answers[0] = selectedQuestions.bonuses[n].formatted_answers[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
+        selectedQuestions.bonuses[n].formatted_answers[1] = selectedQuestions.bonuses[n].formatted_answers[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
+        selectedQuestions.bonuses[n].formatted_answers[2] = selectedQuestions.bonuses[n].formatted_answers[2].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*').replace(/<\/?u>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/ANSWER: /g, '').trim();
+        selectedQuestions.bonuses[n].answers[0] = selectedQuestions.bonuses[n].answers[0].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
+        selectedQuestions.bonuses[n].answers[1] = selectedQuestions.bonuses[n].answers[1].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
+        selectedQuestions.bonuses[n].answers[2] = selectedQuestions.bonuses[n].answers[2].replace(/ *\([^)]*\) */g, ' ').replace(/ *\[[^)]* */g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/(<([^>]+)>)/gi, "").replace(/ANSWER: /g, '').trim();
+        selectedQuestions.bonuses[n].formatted_leadin = selectedQuestions.bonuses[n].formatted_leadin.replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
+        selectedQuestions.bonuses[n].formatted_texts[0] = selectedQuestions.bonuses[n].formatted_texts[0].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
+        selectedQuestions.bonuses[n].formatted_texts[1] = selectedQuestions.bonuses[n].formatted_texts[1].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
+        selectedQuestions.bonuses[n].formatted_texts[2] = selectedQuestions.bonuses[n].formatted_texts[2].replace(/<\/?strong>/g, '**').replace(/<\/?em>/g, '*');
     }
 
-    function firstPart() {
-        let n = Math.floor((Math.random() * userQuestions[message.author.id].bonuses.length));
-        replaceStrings(n);
+    function firstPart(selectedQuestions) {
+        let n = Math.floor((Math.random() * selectedQuestions.bonuses.length));
+        replaceStrings(n, selectedQuestions);
         let firstEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
-            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name + ' | ' + userQuestions[message.author.id].bonuses[n].category.name)
+            .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
             .setTitle('Bonus One')
-            .setDescription(userQuestions[message.author.id].bonuses[n].formatted_leadin + ' ' +
-                userQuestions[message.author.id].bonuses[n].formatted_texts[0])
+            .setDescription(selectedQuestions.bonuses[n].formatted_leadin + ' ' +
+                selectedQuestions.bonuses[n].formatted_texts[0])
             .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
         message.channel.send(firstEmbed);
-        console.log(userQuestions[message.author.id].bonuses[n].answers[0])
+        console.log(selectedQuestions.bonuses[n].answers[0])
         let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
         collector.on('collect', message => {
             if (message.content == prefix + 'end') {
                 collector.stop();
+            } else if (message.content == prefix + 'skip') {
+                collector.stop();
+                firstPart(selectedQuestions);
             } else {
-                console.log(dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[0].toLowerCase()));
-                if (dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[0].toLowerCase()) > 0.4) {
+                console.log(dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()));
+                if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()) > 0.4) {
                     var correctEmbed = new Discord.MessageEmbed()
                         .setColor('#53d645')
                         .setTitle('Correct')
-                        .setDescription(userQuestions[message.author.id].bonuses[n].formatted_answers[0])
-                    message.channel.send(correctEmbed);
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[0] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
                     userData[message.author.id].points += 10;
+                    message.channel.send(correctEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '❌') {
+                                userData[message.author.id].points -= 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
                 } else {
                     var incorrectEmbed = new Discord.MessageEmbed()
                         .setColor('#f72843')
                         .setTitle('Incorrect')
-                        .setDescription(userQuestions[message.author.id].bonuses[n].formatted_answers[0] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[0] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
                     message.channel.send(incorrectEmbed).then(embedMessage => {
                         embedMessage.react('✅');
                         embedMessage.react('❌');
                         let filter = (reaction, user) => {
-                            return reaction.emoji.name === '✅' && user.id === message.author.id;
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
                         };
                         let reactionCollector = embedMessage.createReactionCollector(filter);
                         reactionCollector.on('collect', (reaction, user) => {
-                            console.log('reaction collected');
-                            userData[message.author.id].points += 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            if (reaction.emoji.name === '✅') {
+                                userData[message.author.id].points += 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
                             reactionCollector.stop();
                         });
                     });
                 }
                 userData[message.author.id].parts++
                 fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-                secondPart(n);
+                secondPart(n, selectedQuestions);
                 collector.stop()
             }
         });
     }
 
-    function secondPart(n) {
-        replaceStrings(n);
+    function secondPart(n, selectedQuestions) {
         let secondEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
-            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name + ' | ' + userQuestions[message.author.id].bonuses[n].category.name)
+            .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
             .setTitle('Bonus Two')
-            .setDescription(userQuestions[message.author.id].bonuses[n].formatted_texts[1])
+            .setDescription(selectedQuestions.bonuses[n].formatted_texts[1])
             .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
         message.channel.send(secondEmbed);
-        console.log(userQuestions[message.author.id].bonuses[n].answers[1])
+        console.log(selectedQuestions.bonuses[n].answers[1])
         let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
         collector.on('collect', message => {
             if (message.content == prefix + 'end') {
                 collector.stop();
+            } else if (message.content == prefix + 'skip') {
+                collector.stop();
+                firstPart(selectedQuestions);
             } else {
-                console.log(dice(message.content, userQuestions[message.author.id].bonuses[n].answers[1].toLowerCase()));
-                if (dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[1].toLowerCase()) > 0.4) {
+                console.log(dice(message.content, selectedQuestions.bonuses[n].answers[1].toLowerCase()));
+                if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[1].toLowerCase()) > 0.4) {
                     var correctEmbed = new Discord.MessageEmbed()
                         .setColor('#53d645')
                         .setTitle('Correct')
-                        .setDescription(userQuestions[message.author.id].bonuses[n].formatted_answers[1])
-                    message.channel.send(correctEmbed);
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[1] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
                     userData[message.author.id].points += 10;
+                    message.channel.send(correctEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '❌') {
+                                userData[message.author.id].points -= 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+
                 } else {
                     var incorrectEmbed = new Discord.MessageEmbed()
                         .setColor('#f72843')
                         .setTitle('Incorrect')
-                        .setDescription(userQuestions[message.author.id].bonuses[n].formatted_answers[1] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[1] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
                     message.channel.send(incorrectEmbed).then(embedMessage => {
                         embedMessage.react('✅');
                         embedMessage.react('❌');
                         let filter = (reaction, user) => {
-                            return reaction.emoji.name === '✅' && user.id === message.author.id;
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
                         };
                         let reactionCollector = embedMessage.createReactionCollector(filter);
                         reactionCollector.on('collect', (reaction, user) => {
-                            console.log('reaction collected');
-                            userData[message.author.id].points += 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            if (reaction.emoji.name === '✅') {
+                                userData[message.author.id].points += 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
                             reactionCollector.stop();
                         });
                     });
                 }
                 userData[message.author.id].parts++
                 fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-                thirdPart(n);
+                thirdPart(n, selectedQuestions);
                 collector.stop()
             }
         });
     }
 
-    function thirdPart(n) {
-        replaceStrings(n);
+    function thirdPart(n, selectedQuestions) {
         let thirdEmbed = new Discord.MessageEmbed()
             .setColor('#f5f5f5')
-            .setAuthor(userQuestions[message.author.id].bonuses[n].tournament.name + ' | ' + userQuestions[message.author.id].bonuses[n].category.name)
-            .setTitle('Bonus Two')
-            .setDescription(userQuestions[message.author.id].bonuses[n].formatted_texts[2])
+            .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
+            .setTitle('Bonus Three')
+            .setDescription(selectedQuestions.bonuses[n].formatted_texts[2])
             .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
         message.channel.send(thirdEmbed);
-        console.log(userQuestions[message.author.id].bonuses[n].answers[2])
+        console.log(selectedQuestions.bonuses[n].answers[2])
         let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
         collector.on('collect', message => {
             if (message.content == prefix + 'end') {
                 collector.stop();
+            } else if (message.content == prefix + 'skip') {
+                collector.stop();
+                firstPart(selectedQuestions);
             } else {
-                console.log(dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[2].toLowerCase()));
-                if (dice(message.content.toLowerCase(), userQuestions[message.author.id].bonuses[n].answers[2].toLowerCase()) > 0.4) {
+                console.log(dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()));
+                if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()) > 0.4) {
                     var correctEmbed = new Discord.MessageEmbed()
                         .setColor('#53d645')
                         .setTitle('Correct')
-                        .setDescription(userQuestions[message.author.id].bonuses[n].formatted_answers[2])
-                    message.channel.send(correctEmbed);
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[2] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
                     userData[message.author.id].points += 10;
+                    message.channel.send(correctEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '❌') {
+                                userData[message.author.id].points -= 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
                 } else {
                     var incorrectEmbed = new Discord.MessageEmbed()
                         .setColor('#f72843')
                         .setTitle('Incorrect')
-                        .setDescription(userQuestions[message.author.id].bonuses[n].formatted_answers[2] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[2] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
                     message.channel.send(incorrectEmbed).then(embedMessage => {
                         embedMessage.react('✅');
                         embedMessage.react('❌');
                         let filter = (reaction, user) => {
-                            return reaction.emoji.name === '✅' && user.id === message.author.id;
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === message.author.id;
                         };
                         let reactionCollector = embedMessage.createReactionCollector(filter);
                         reactionCollector.on('collect', (reaction, user) => {
-                            console.log('reaction collected');
-                            userData[message.author.id].points += 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            if (reaction.emoji.name === '✅') {
+                                userData[message.author.id].points += 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
                             reactionCollector.stop();
                         });
                     });
                 }
                 userData[message.author.id].parts++
                 fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-                firstPart();
+                firstPart(selectedQuestions);
                 collector.stop()
             }
         });
+    }
+
+    function firstPartMulti(selectedQuestions, player) {
+        let n = Math.floor((Math.random() * selectedQuestions.bonuses.length));
+        replaceStrings(n, selectedQuestions);
+        let firstEmbed = new Discord.MessageEmbed()
+            .setColor('#f5f5f5')
+            .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
+            .setTitle('Bonus One | for: ' + player.displayName)
+            .setDescription(selectedQuestions.bonuses[n].formatted_leadin + ' ' +
+                selectedQuestions.bonuses[n].formatted_texts[0])
+            .setFooter(userData[player.id].points + ' points in ' + userData[player.id].parts + ' bonus parts');
+        message.channel.send(firstEmbed);
+        console.log(selectedQuestions.bonuses[n].answers[0])
+        let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
+        collector.on('collect', message => {
+            if (message.content == prefix + 'end') {
+                console.log(message.author.id);
+                collector.stop();
+            } else if (message.content == prefix + 'skip') {
+                collector.stop();
+                player = userData[player.id].playing.with;
+                player.id = player.userID;
+                selectedQuestions = userQuestions[player.id];
+                firstPartMulti(selectedQuestions, player);
+            } else if (userData[player.id].playing === 'no') {
+                collector.stop();
+            } else {
+                console.log(dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()));
+                if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()) > 0.4) {
+                    var correctEmbed = new Discord.MessageEmbed()
+                        .setColor('#53d645')
+                        .setTitle('Correct')
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[0] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                    userData[player.id].points += 10;
+                    message.channel.send(correctEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '❌') {
+                                userData[player.id].points -= 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+                } else {
+                    var incorrectEmbed = new Discord.MessageEmbed()
+                        .setColor('#f72843')
+                        .setTitle('Incorrect')
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[0] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                    message.channel.send(incorrectEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '✅') {
+                                userData[player.id].points += 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+                }
+                userData[player.id].parts++
+                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                secondPartMulti(n, selectedQuestions, player);
+                collector.stop()
+            }
+        });
+    }
+
+    function secondPartMulti(n, selectedQuestions, player) {
+        let secondEmbed = new Discord.MessageEmbed()
+            .setColor('#f5f5f5')
+            .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
+            .setTitle('Bonus Two | for: ' + player.displayName)
+            .setDescription(selectedQuestions.bonuses[n].formatted_texts[1])
+            .setFooter(userData[player.id].points + ' points in ' + userData[player.id].parts + ' bonus parts');
+        message.channel.send(secondEmbed);
+        console.log(selectedQuestions.bonuses[n].answers[1])
+        let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
+        collector.on('collect', message => {
+            console.log(message.author.id)
+            if (message.content == prefix + 'end') {
+                console.log(message.author.id);
+                collector.stop();
+            } else if (message.content == prefix + 'skip') {
+                collector.stop();
+                player = userData[player.id].playing.with;
+                player.id = player.userID;
+                selectedQuestions = userQuestions[player.id];
+                firstPartMulti(selectedQuestions, player);
+            } else if (userData[player.id].playing === 'no') {
+                collector.stop();
+            } else {
+                console.log(message.author.id);
+                console.log(dice(message.content, selectedQuestions.bonuses[n].answers[1].toLowerCase()));
+                if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[1].toLowerCase()) > 0.4) {
+                    var correctEmbed = new Discord.MessageEmbed()
+                        .setColor('#53d645')
+                        .setTitle('Correct')
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[1] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                    userData[player.id].points += 10;
+                    message.channel.send(correctEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '❌') {
+                                userData[player.id].points -= 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+
+                } else {
+                    var incorrectEmbed = new Discord.MessageEmbed()
+                        .setColor('#f72843')
+                        .setTitle('Incorrect')
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[1] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                    message.channel.send(incorrectEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '✅') {
+                                userData[player.id].points += 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+                }
+                userData[player.id].parts++
+                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                thirdPartMulti(n, selectedQuestions, player);
+                collector.stop()
+            }
+        });
+    }
+
+    function thirdPartMulti(n, selectedQuestions, player) {
+        let thirdEmbed = new Discord.MessageEmbed()
+            .setColor('#f5f5f5')
+            .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
+            .setTitle('Bonus Three | for: ' + player.displayName)
+            .setDescription(selectedQuestions.bonuses[n].formatted_texts[2])
+            .setFooter(userData[player.id].points + ' points in ' + userData[player.id].parts + ' bonus parts');
+        message.channel.send(thirdEmbed);
+        console.log(selectedQuestions.bonuses[n].answers[2])
+        let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
+        collector.on('collect', message => {
+            if (message.content == prefix + 'end') {
+                collector.stop();
+            } else if (message.content == prefix + 'skip') {
+                collector.stop();
+                player = userData[player.id].playing.with;
+                player.id = player.userID;
+                selectedQuestions = userQuestions[player.id];
+                firstPartMulti(selectedQuestions, player);
+            } else if (userData[player.id].playing === 'no') {
+                collector.stop();
+            } else {
+                console.log(dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()));
+                if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()) > 0.4) {
+                    var correctEmbed = new Discord.MessageEmbed()
+                        .setColor('#53d645')
+                        .setTitle('Correct')
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[2] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                    userData[player.id].points += 10;
+                    message.channel.send(correctEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '❌') {
+                                userData[player.id].points -= 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+                } else {
+                    var incorrectEmbed = new Discord.MessageEmbed()
+                        .setColor('#f72843')
+                        .setTitle('Incorrect')
+                        .setDescription(selectedQuestions.bonuses[n].formatted_answers[2] + "\n\nReact ✅ or ❌ to override the decision This can only be done once")
+                    message.channel.send(incorrectEmbed).then(embedMessage => {
+                        embedMessage.react('✅');
+                        embedMessage.react('❌');
+                        let filter = (reaction, user) => {
+                            return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        };
+                        let reactionCollector = embedMessage.createReactionCollector(filter);
+                        reactionCollector.on('collect', (reaction, user) => {
+                            if (reaction.emoji.name === '✅') {
+                                userData[player.id].points += 10;
+                                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                            }
+                            reactionCollector.stop();
+                        });
+                    });
+                }
+                userData[player.id].parts++
+                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                console.log(player.id);
+                player = userData[player.id].playing.with;
+                player.id = player.userID;
+                selectedQuestions = userQuestions[player.id];
+                firstPartMulti(selectedQuestions, player);
+                collector.stop()
+            }
+        });
+    }
+
+    function categoryNames(args, num) {
+        args[num] = args[num].toLowerCase();
+        switch (args[num]) {
+            case 'ce':
+                args[num] = 'Current Events';
+                break;
+            case 'fa':
+                args[num] = 'Fine Arts';
+                break;
+            case 'sosc':
+                args[num] = 'Social Science';
+                break;
+            case 'geo':
+                args[num] = 'Geography';
+                break;
+            case 'hist':
+                args[num] = 'History';
+                break;
+            case 'lit':
+                args[num] = 'Literature';
+                break;
+            case  'myth':
+                args[num] = 'Mythology';
+                break;
+            case  'philo':
+                args[num] = 'Philosophy';
+                break;
+            case  'rel':
+                args[num] = 'Religion';
+                break;
+            case  'sci':
+                args[num] = 'Science';
+        }
     }
 
     if (commandText == 'params') {
@@ -241,8 +559,8 @@ client.on('message', message => {
                 message.channel.send('Parameters reset!');
                 fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
             } else if (args[0] == 'all') {
-                userQuestions[message.author.id].bonuses = questions.data.bonuses;
-                message.channel.send('Parameters set to all questions!');
+                userQuestions[message.author.id].bonuses.push('all');
+                message.channel.send('Parameters set to all questions! Selected ' + questions.data.bonuses.bonusa   .length + ' questions.');
                 fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
             } else if (args[0] == 'diff') {
                 if (!args[1]) {
@@ -258,7 +576,7 @@ client.on('message', message => {
                         message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
 
                     } else {
-                        message.channel.send('Parameters set to difficulty ' + args[1] + '!');
+                        message.channel.send('Parameters set to difficulty ' + args[1] + '! Selected ' + userQuestions[message.author.id].bonuses.length + ' questions.');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
                 }
@@ -266,35 +584,7 @@ client.on('message', message => {
                 if (!args[1]) {
                     message.channel.send('Please add a category after the command');
                 } else if (args[1]) {
-                    if (args[1].toLowerCase() == "ce") {
-                        args[1] = "current events";
-                    } else if (args[1].toLowerCase() == "fa") {
-                        args[1] = "fine arts";
-                    } else if (args[1].toLowerCase() == "sosc") {
-                        args[1] = "social science";
-                    }
-                    else if (args[1].toLowerCase() == "geo") {
-                        args[1] = "geography";
-                    }
-                    else if (args[1].toLowerCase() == "hist") {
-                        args[1] = "history";
-                    }
-                    else if (args[1].toLowerCase() == "lit") {
-                        args[1] = "literature";
-                    }
-                    else if (args[1].toLowerCase() == "myth") {
-                        args[1] = "mythology";
-                    }
-                    else if (args[1].toLowerCase() == "philo") {
-                        args[1] = "philosophy";
-                    }
-                    else if (args[0].toLowerCase() == "rel") {
-                        args[0] = "religion";
-                    }
-                    else if (args[1].toLowerCase() == "sci") {
-                        args[1] = "science";
-                    }
-
+                    categoryNames(args, 1);
                     userQuestions[message.author.id].bonuses = []
                     questions.data.bonuses.forEach(bonus => {
                         if (bonus.category.name.toLowerCase() == args[1].toLowerCase()) {
@@ -305,41 +595,13 @@ client.on('message', message => {
                         message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
 
                     } else {
-                        message.channel.send('Parameters set to category ' + args[1] + '!');
+                        message.channel.send('Parameters set to category ' + args[1] + '! Selected ' + userQuestions[message.author.id].bonuses.length + ' questions.');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
                 }
-            }
-            else if (args[0] == 'add') {
-                if(args[1] && args[2]) {
-                    if (args[1].toLowerCase() == "ce") {
-                        args[1] = "current events";
-                    } else if (args[1].toLowerCase() == "fa") {
-                        args[1] = "fine arts";
-                    } else if (args[1].toLowerCase() == "sosc") {
-                        args[1] = "social science";
-                    }
-                    else if (args[1].toLowerCase() == "geo") {
-                        args[1] = "geography";
-                    }
-                    else if (args[1].toLowerCase() == "hist") {
-                        args[1] = "history";
-                    }
-                    else if (args[1].toLowerCase() == "lit") {
-                        args[1] = "literature";
-                    }
-                    else if (args[1].toLowerCase() == "myth") {
-                        args[1] = "mythology";
-                    }
-                    else if (args[1].toLowerCase() == "philo") {
-                        args[1] = "philosophy";
-                    }
-                    else if (args[1].toLowerCase() == "rel") {
-                        args[1] = "religion";
-                    }
-                    else if (args[1].toLowerCase() == "sci") {
-                        args[1] = "science";
-                    }
+            } else if (args[0] == 'add') {
+                if (args[1] && args[2]) {
+                    categoryNames(args, 1)
 
                     questions.data.bonuses.forEach(bonus => {
                         if (bonus.category.name.toLowerCase() == args[1].toLowerCase() && bonus.tournament.difficulty_num == args[2]) {
@@ -350,46 +612,19 @@ client.on('message', message => {
                         message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
 
                     } else {
-                        message.channel.send('Parameters set to category ' + args[1] + ' and difficulty ' + args[2] + '!');
+                        message.channel.send('Parameters set to category ' + args[1] + ' and difficulty ' + args[2] + '! Selected ' + userQuestions[message.author.id].bonuses.length + ' questions.');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
-                }
-                else {
+                } else {
                     message.channel.send('Please include both a category and difficulty in the command.');
                 }
 
-            }
-            else {
-                if(args[0] && args[1]) {
-                    if (args[0].toLowerCase() == "ce") {
-                        args[0] = "current events";
-                    } else if (args[0].toLowerCase() == "fa") {
-                        args[0] = "fine arts";
-                    } else if (args[0].toLowerCase() == "sosc") {
-                        args[0] = "social science";
-                    }
-                    else if (args[0].toLowerCase() == "geo") {
-                        args[0] = "geography";
-                    }
-                    else if (args[0].toLowerCase() == "hist") {
-                        args[0] = "history";
-                    }
-                    else if (args[0].toLowerCase() == "lit") {
-                        args[0] = "literature";
-                    }
-                    else if (args[0].toLowerCase() == "myth") {
-                        args[0] = "mythology";
-                    }
-                    else if (args[0].toLowerCase() == "philo") {
-                        args[0] = "philosophy";
-                    }
-                    else if (args[0].toLowerCase() == "rel") {
-                        args[0] = "religion";
-                    }
-                    else if (args[0].toLowerCase() == "sci") {
-                        args[0] = "science";
-                    }
-
+            } else {
+                if (args[0] && args[1]) {
+                    if (Number.isInteger(args[0]) && !Number.isInteger(args[1])) {
+                        message.channel.send('The first argument sent must be the name or shortened name of a category. The second must be a number from 1 to 9 denoting difficulty. Try `!help` and click the link for `!params` for more information.')
+                    } else {
+                    categoryNames(args, 0);
                     userQuestions[message.author.id].bonuses = []
                     questions.data.bonuses.forEach(bonus => {
                         if (bonus.category.name.toLowerCase() == args[0].toLowerCase() && bonus.tournament.difficulty_num == args[1]) {
@@ -400,11 +635,11 @@ client.on('message', message => {
                         message.channel.send('It seems that that filter returned no bonuses. Try setting a different category or difficulty and be sure to check your spelling.');
 
                     } else {
-                        message.channel.send('Parameters set to category ' + args[0] + ' and difficulty ' + args[1] + '!');
+                        message.channel.send('Parameters set to category ' + args[0] + ' and difficulty ' + args[1] + '! Selected ' + userQuestions[message.author.id].bonuses.length + ' questions.');
                         fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                     }
                 }
-                else {
+                } else {
                     message.channel.send('Please include both a category and difficulty in the command.');
                 }
             }
@@ -421,7 +656,67 @@ client.on('message', message => {
 
     if (commandText == "pk") {
         if (args[0]) {
-            message.channel.send("Try just `!pk` instead. Don't forget to set parameters with `!params` beforehand!");
+            if (message.mentions.members.first()) {
+                if (message.mentions.members.first().user.bot) {
+                    message.channel.send("You can't pk with a bot!");
+                }
+                if (message.author.id === message.mentions.members.first().id)    {
+                    message.channel.send("To pk by yourself, use just `!pk`");
+                }
+                    else {
+                    if (!userData[message.mentions.members.first().id] || !userData[message.mentions.members.first().id]) {
+                        userData[message.mentions.members.first().id] = {};
+                        userData[message.mentions.members.first().id].points = 0;
+                        userData[message.mentions.members.first().id].parts = 0;
+                        userData[message.mentions.members.first().id].playing = "no";
+                        userQuestions[message.mentions.members.first().id] = {};
+                        userQuestions[message.mentions.members.first().id].bonuses = [];
+                        userQuestions[message.mentions.members.first().id].bonuses.push(questions.data.bonuses[1]);
+                        userQuestions[message.mentions.members.first().id].bonusesTemp = [];
+                        fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+                        reloadData();
+                    }
+                    if (userQuestions[message.author.id].bonuses.length && userQuestions[message.mentions.members.first().id].bonuses.length) {
+                        if (userData[message.author.id].playing === 'yes' || userData[message.mentions.members.first().id].playing === 'yes' || userData[message.author.id].playing.with || userData[message.mentions.members.first().id].playing.with) {
+                            message.channel.send("One of the two selected players is already in a pk!");
+                        } else if (userData[message.author.id].playing === 'no' && userData[message.mentions.members.first().id].playing === 'no') {
+                            if (userQuestions[message.author.id].bonuses[0] == 'all') {
+                                message.channel.send('You cannot pk with multiple people with all bonuses selected!');
+                            } else {
+                                let pkWithEmbed = new Discord.MessageEmbed()
+                                    .setTitle('pk Request')
+                                    .setDescription(`${message.mentions.members.first().toString()}, ${message.author.toString()} wants to pk with you. \n React 👍 to accept and 👎 to decline`)
+                                message.channel.send(pkWithEmbed).then(embedMessage => {
+                                    embedMessage.react('👍');
+                                    embedMessage.react('👎');
+                                    let pkWithFilter = (reaction, user) => {
+                                        return (reaction.emoji.name === '👍' || reaction.emoji.name === '👎') && user.id === message.mentions.members.first().id;
+                                    };
+                                    let pkWithReactionCollector = embedMessage.createReactionCollector(pkWithFilter);
+                                    pkWithReactionCollector.on('collect', (reaction, user) => {
+                                        if (reaction.emoji.name === '👍') {
+                                            userData[message.author.id].playing = {};
+                                            userData[message.author.id].playing.with = message.guild.members.cache.get(message.mentions.members.first().id);
+                                            userData[message.mentions.members.first().id].playing = {};
+                                            userData[message.mentions.members.first().id].playing.with = message.guild.members.cache.get(message.author.id);
+                                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                                            let player = message.guild.members.cache.get(message.author.id)
+                                            let selectedQuestions = userQuestions[player.id];
+                                            firstPartMulti(selectedQuestions, player);
+                                        }
+                                        pkWithReactionCollector.stop();
+                                    });
+                                });
+                            }
+                        }
+                    } else {
+                        message.channel.send("It looks like someone doesn't have any bonuses selected. Try selecting some with `!params`")
+                    }
+                }
+            } else {
+                message.channel.send("Try just `!pk` instead. Don't forget to set parameters with `!params` beforehand!");
+            }
         } else {
             if (userQuestions[message.author.id].bonuses.length) {
                 if (userData[message.author.id].playing === "yes") {
@@ -429,10 +724,15 @@ client.on('message', message => {
                 } else if (userData[message.author.id].playing === "no") {
                     userData[message.author.id].playing = "yes";
                     fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-                    firstPart();
+                    if (userQuestions[message.author.id].bonuses[0] == 'all') {
+                        let selectedQuestions = questions.data.bonuses;
+                        firstPart(selectedQuestions);
+                    } else {
+                        let selectedQuestions = userQuestions[message.author.id];
+                        firstPart(selectedQuestions);
+                    }
                 }
-            }
-            else {
+            } else {
                 message.channel.send("It looks like you don't have any bonuses selected. Try selecting some with `!params`")
             }
         }
@@ -446,8 +746,29 @@ client.on('message', message => {
             }
             var endEmbed = new Discord.MessageEmbed()
                 .setTitle('Pk ended')
-                .setDescription(Math.round(ppb   * 100) / 100 + ' ppb')
+                .setDescription(Math.round(ppb * 100) / 100 + ' ppb')
             message.channel.send(endEmbed);
+            userData[message.author.id].points = 0;
+            userData[message.author.id].parts = 0;
+            userData[message.author.id].playing = "no";
+            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+            reloadData();
+        } else if (userData[message.author.id].playing.with) {
+            let ppb = userData[message.author.id].points / userData[message.author.id].parts * 3;
+            let otherPpb = userData[userData[message.author.id].playing.with.userID].points / userData[userData[message.author.id].playing.with.userID].parts * 3
+            if (isNaN(ppb)) {
+                ppb = 0;
+            }
+            if (isNaN(otherPpb)) {
+                otherPpb = 0;
+            }
+            var endEmbed = new Discord.MessageEmbed()
+                .setTitle('Pk ended')
+                .setDescription(message.author.username + ': ' + Math.round(ppb * 100) / 100 + ' ppb \n' + userData[message.author.id].playing.with.displayName + ': ' + Math.round(otherPpb * 100) / 100 + ' ppb')
+            message.channel.send(endEmbed);
+            userData[userData[message.author.id].playing.with.userID].points = 0;
+            userData[userData[message.author.id].playing.with.userID].parts = 0;
+            userData[userData[message.author.id].playing.with.userID].playing = "no"
             userData[message.author.id].points = 0;
             userData[message.author.id].parts = 0;
             userData[message.author.id].playing = "no";
@@ -460,4 +781,4 @@ client.on('message', message => {
 });
 
 
-client.login(process.env.token);
+client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.BuTgQlnvQG14zjjaBKVHXAXOH40');
