@@ -781,4 +781,4 @@ client.on('message', message => {
 });
 
 
-client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.BuTgQlnvQG14zjjaBKVHXAXOH40');
+client.login(TOKEN);
