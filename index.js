@@ -131,6 +131,8 @@ client.on('message', message => {
       } else if (message.content == prefix + 'skip') {
         collector.stop();
         firstPart(selectedQuestions);
+      } else if (userData[message.author.id].playing === 'no') {
+        collector.stop();
       } else {
         console.log(dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()));
         if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()) > 0.4) {
@@ -200,6 +202,8 @@ client.on('message', message => {
       } else if (message.content == prefix + 'skip') {
         collector.stop();
         firstPart(selectedQuestions);
+      } else if (userData[message.author.id].playing === 'no') {
+        collector.stop();
       } else {
         console.log(dice(message.content, selectedQuestions.bonuses[n].answers[1].toLowerCase()));
         if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[1].toLowerCase()) > 0.4) {
@@ -270,6 +274,8 @@ client.on('message', message => {
       } else if (message.content == prefix + 'skip') {
         collector.stop();
         firstPart(selectedQuestions);
+      } else if (userData[message.author.id].playing === 'no') {
+        collector.stop();
       } else {
         console.log(dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()));
         if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()) > 0.4) {
