@@ -1,4 +1,4 @@
-function changeCategory(args, num) {
+function change(args, num) {
     args[num] = args[num].toLowerCase();
     switch (args[num]) {
         case 'ce':
@@ -228,8 +228,16 @@ function changeCategory(args, num) {
             break;
         case 'vg':
             args[num] = 'Trash Video Games';
+            break;
+        case 'pb':
+            args[num] = 'Prison Bowl'
+            break;
+        case 'bisb':
+            args[num] = 'Brookwood Invitational'
+            break;
+        case 'cms':
+            args[num] = 'Collaborative MS'
     }
 }
-module.exports = {changeCategory}
 
-module.exports = {changeCategory}
+module.exports = {change}
