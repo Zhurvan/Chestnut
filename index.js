@@ -53,6 +53,7 @@ client.on('message', message => {
             userData[message.author.id].playing = "no";
             userData[message.author.id].paused = "no";
             userData[message.author.id].link = "";
+            userData[message.author.id].categories = [];
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
             reload.reloadUserData();
         }
@@ -79,6 +80,26 @@ client.on('message', message => {
         if (!guildData[message.guild.id]) {
             initGuildData();
             console.log(`Joined and Connected to ${message.guild.name}`)
+        }
+
+        if (message.mentions.members.first()) {
+            if (!userData[message.mentions.members.first().id]) {
+                userData[message.mentions.members.first().id] = {};
+                userData[message.mentions.members.first().id].points = 0;
+                userData[message.mentions.members.first().id].parts = 0;
+                userData[message.mentions.members.first().id].playing = "no";
+                userData[message.mentions.members.first().id].paused = "no";
+                userData[message.mentions.members.first().id].link = "";
+                userData[message.mentions.members.first().id].categories = [];
+                fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                reload.reloadUserData();
+            }
+            if (!userData[message.mentions.members.first().id]) {
+                userQuestions[message.mentions.members.first().id] = {};
+                userQuestions[message.mentions.members.first().id].bonuses = [];
+                userQuestions[message.mentions.members.first().id].bonusesTemp = [];
+                fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+            }
         }
 
         const prefix = guildData[message.guild.id].prefix;
@@ -124,4 +145,4 @@ process.on('uncaughtException', function (e) {
 });
 
 
-client.login(TOKEN);
+client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.KRtmq9jU78JIZoceLtZLXQjRbM8');

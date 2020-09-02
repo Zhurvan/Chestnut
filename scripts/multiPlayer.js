@@ -5,7 +5,6 @@ const replace = require('./replace');
 const wikipedia = require('./wikipedia');
 
 function firstPart(message, prefix, player, userData, userQuestions, selectedQuestions) {
-  //  console.log(userData[message.author.id]);
     let n = Math.floor((Math.random() * selectedQuestions.bonuses.length));
     replace.strings(n, selectedQuestions);
     wikipedia.search(selectedQuestions.bonuses[n].answers[0], player, userData);
@@ -82,7 +81,6 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
             secondPart(message, prefix, player, userData, userQuestions, n, selectedQuestions);
             collector.stop();
-            console.log(userData[message.author.id]);
         }
     });
 }
@@ -163,7 +161,6 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
             thirdPart(message, prefix, player, userData, userQuestions, n, selectedQuestions);
             collector.stop();
-            console.log(userData[message.author.id]);
         }
     });
 }
@@ -244,7 +241,6 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            console.log(userData[message.author.id]);
             firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
             collector.stop()
         }

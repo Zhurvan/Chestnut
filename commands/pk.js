@@ -16,20 +16,6 @@ module.exports = {
                 if (message.author.id === message.mentions.members.first().id) {
                     message.channel.send("To pk by yourself, use just `" + prefix + 'pk`');
                 } else {
-                    if (!userData[message.mentions.members.first().id]) {
-                        userData[message.mentions.members.first().id] = {};
-                        userData[message.mentions.members.first().id].points = 0;
-                        userData[message.mentions.members.first().id].parts = 0;
-                        userData[message.mentions.members.first().id].playing = "no";
-                        fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-                        reload.reloadUserData();
-                    }
-                    if (!userData[message.mentions.members.first().id]) {
-                        userQuestions[message.mentions.members.first().id] = {};
-                        userQuestions[message.mentions.members.first().id].bonuses = [];
-                        userQuestions[message.mentions.members.first().id].bonusesTemp = [];
-                        fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
-                    }
                     if (userQuestions[message.author.id].bonuses.length && userQuestions[message.mentions.members.first().id].bonuses.length) {
                         if (userData[message.author.id].playing === 'yes' || userData[message.mentions.members.first().id].playing === 'yes' || userData[message.author.id].playing.with || userData[message.mentions.members.first().id].playing.with) {
                             message.channel.send("One of the two selected players is already in a pk!");
