@@ -21,7 +21,7 @@ The table below displays the advantages and disadvantages to using each as of 08
 | Choosing Difficulty       | ✔️      | ✔️             | ✔️                |
 | Choosing Category         | ✔️      | ✔️             | ✔️                |
 | Choosing Subcategory        | ✔️      | ✔️             | ✔️                |
-| Choosing Tournament       |        | ✔️             | ✔️                |
+| Choosing Tournament       |  ✔️      | ✔️             | ✔️                |
 | Choosing Year             |  ✔️      | ✔️             | ✔️                |
 | Choosing Multiple Filters | ✔️      |               | ✔️                |
 | Changing Distribution     |        |               | ✔️                |
