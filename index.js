@@ -1,9 +1,10 @@
 const fs = require('fs');
-const reload = require('./scripts/reload')
+const cjson = require('compressed-json');
+const reload = require('./scripts/reload');
 const Discord = require('discord.js');
 
 let questionsData = fs.readFileSync('./data/questions.json');
-let questions = JSON.parse(questionsData);
+let questions = cjson.decompress(JSON.parse(questionsData)).questions;
 console.log('Questions Loaded');
 let userFile = fs.readFileSync('./data/users.json');
 let userData = JSON.parse(userFile);
@@ -123,4 +124,4 @@ process.on('uncaughtException', function (e) {
 });
 
 
-client.login(TOKEN);
+client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.grOAz9HTwR9pQXWiu7h5UrxaAXM');
