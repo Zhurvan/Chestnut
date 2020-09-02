@@ -23,7 +23,7 @@ function firstPart(message, prefix, userData, selectedQuestions) {
             collector.stop();
         } else if (message.content == prefix + 'skip') {
             collector.stop();
-            firstPart(selectedQuestions);
+            firstPart(message, prefix, userData, selectedQuestions);
         } else if (userData[message.author.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
@@ -100,7 +100,7 @@ function secondPart(message, prefix, userData, n, selectedQuestions) {
             collector.stop();
         } else if (message.content == prefix + 'skip') {
             collector.stop();
-            firstPart(selectedQuestions);
+            firstPart(message, prefix, userData, selectedQuestions);
         } else if (userData[message.author.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
@@ -177,7 +177,7 @@ function thirdPart(message, prefix, userData, n, selectedQuestions) {
             collector.stop();
         } else if (message.content == prefix + 'skip') {
             collector.stop();
-            firstPart(selectedQuestions);
+            firstPart(message, prefix, userData, selectedQuestions);
         } else if (userData[message.author.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
