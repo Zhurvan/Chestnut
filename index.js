@@ -124,4 +124,4 @@ process.on('uncaughtException', function (e) {
 });
 
 
-client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.grOAz9HTwR9pQXWiu7h5UrxaAXM');
+client.login(TOKEN);
