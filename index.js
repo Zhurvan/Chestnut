@@ -145,4 +145,4 @@ process.on('uncaughtException', function (e) {
 });
 
 
-client.login('NzQ0NjY1NzMxOTY2MTczMzQ2.XzmiAQ.KRtmq9jU78JIZoceLtZLXQjRbM8');
+client.login(TOKEN);
