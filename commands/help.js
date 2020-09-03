@@ -13,7 +13,8 @@ module.exports = {
                 '[`' + prefix + 'skip`](https://github.com/Bubblebyb/pk-bot/wiki/skip): Skips to the next question \n ' +
                 '[`' + prefix + 'pause`](https://github.com/Bubblebyb/pk-bot/wiki/Pause): Pauses the pk \n ' +
                 '[`' + prefix + 'play`](https://github.com/Bubblebyb/pk-bot/wiki/Play): Unpauses the pk \n ' +
-                '[`' + prefix + 'end`](https://github.com/Bubblebyb/pk-bot/wiki/End): Ends the pk')
+                '[`' + prefix + 'end`](https://github.com/Bubblebyb/pk-bot/wiki/End): Ends the pk \n ' +
+                '[`' + prefix + 'color`](https://github.com/Bubblebyb/pk-bot/wiki/Color): Displays or changes the bar or text color')
             .setFooter('Click on any of the commands to go to their wiki page')
         message.channel.send(helpEmbed);
     },

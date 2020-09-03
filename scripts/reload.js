@@ -10,4 +10,9 @@ function reloadGuildData() {
     guildData = JSON.parse(guildFile);
 }
 
-module.exports = {reloadUserData, reloadGuildData}
+function reloadRatingData() {
+    ratingsData = fs.readFileSync('./data/ratings.json');
+    ratings = JSON.parse(ratingsData);
+}
+
+module.exports = {reloadUserData, reloadGuildData, reloadRatingData}

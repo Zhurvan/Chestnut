@@ -7,13 +7,16 @@ function search(answer, player, userData) {
     return fetch(endpoint)
         .then(response => response.json())
         .then(data => {
+            userData[player.id].link = ''
             const results = data.query.search;
             let result = results[0]
-            userData[player.id].link  = encodeURI(`https://en.wikipedia.org/wiki/${result.title}`);
+            userData[player.id].link = encodeURI(`https://en.wikipedia.org/wiki/${result.title}`);
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
             reload.reloadUserData();
         })
-        .catch(() => console.log('An error occurred'));
+        .catch(() => {
+            console.log('An error occurred')
+        });
 }
 
 module.exports = { search }

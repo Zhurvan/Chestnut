@@ -21,6 +21,7 @@
     "compressed-json": "^1.0.15",
     "dice-coefficient": "^1.0.5",
     "discord.js": "^12.3.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "ntc": "0.0.1"
   }
 }

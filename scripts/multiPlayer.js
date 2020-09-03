@@ -9,10 +9,10 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
     replace.strings(n, selectedQuestions);
     wikipedia.search(selectedQuestions.bonuses[n].answers[0], player, userData);
     let firstEmbed = new Discord.MessageEmbed()
-        .setColor('#f5f5f5')
+        .setColor(userData[player.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
         .setTitle('Bonus One')
-        .addField('For ' + player.displayName, selectedQuestions.bonuses[n].formatted_leadin + ' ' + selectedQuestions.bonuses[n].formatted_texts[0])
+        .addField('For ' + player.displayName, userData[player.id].color.part1 + selectedQuestions.bonuses[n].formatted_leadin + ' ' + selectedQuestions.bonuses[n].formatted_texts[0] + userData[player.id].color.part2)
         .setFooter(userData[player.id].points + ' points in ' + userData[player.id].parts + ' bonus parts');
     message.channel.send(firstEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
@@ -88,10 +88,10 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
 function secondPart(message, prefix, player, userData, userQuestions, n, selectedQuestions) {
     wikipedia.search(selectedQuestions.bonuses[n].answers[1], player, userData);
     let secondEmbed = new Discord.MessageEmbed()
-        .setColor('#f5f5f5')
+        .setColor(userData[player.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
         .setTitle('Bonus Two')
-        .addField('For ' + player.displayName, selectedQuestions.bonuses[n].formatted_texts[1])
+        .addField('For ' + player.displayName, userData[player.id].color.part1 + selectedQuestions.bonuses[n].formatted_texts[1] + userData[player.id].color.part2)
         .setFooter(userData[player.id].points + ' points in ' + userData[player.id].parts + ' bonus parts');
     message.channel.send(secondEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
@@ -168,10 +168,10 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
 function thirdPart(message, prefix, player, userData, userQuestions, n, selectedQuestions) {
     wikipedia.search(selectedQuestions.bonuses[n].answers[2], player);
     let thirdEmbed = new Discord.MessageEmbed()
-        .setColor('#f5f5f5')
+        .setColor(userData[player.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
         .setTitle('Bonus Three')
-        .addField('For ' + player.displayName, selectedQuestions.bonuses[n].formatted_texts[2])
+        .addField('For ' + player.displayName, userData[player.id].color.part1 + selectedQuestions.bonuses[n].formatted_texts[2] + userData[player.id].color.part2)
         .setFooter(userData[player.id].points + ' points in ' + userData[player.id].parts + ' bonus parts');
     message.channel.send(thirdEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
@@ -197,7 +197,7 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
-                    .setTitle('🟢Correct')
+                    .setTitle('🟢 Correct')
                     .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {

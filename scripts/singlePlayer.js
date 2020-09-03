@@ -4,16 +4,16 @@ const dice = require('dice-coefficient');
 const replace = require('./replace');
 const wikipedia = require('./wikipedia');
 
-function firstPart(message, prefix, userData, selectedQuestions) {
+function firstPart(message, prefix, userData, selectedQuestions, ratings) {
     let n = Math.floor((Math.random() * selectedQuestions.bonuses.length));
     replace.strings(n, selectedQuestions);
     wikipedia.search(selectedQuestions.bonuses[n].answers[0], message.author, userData);
     let firstEmbed = new Discord.MessageEmbed()
-        .setColor('#f5f5f5')
+        .setColor(userData[message.author.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
         .setTitle('Bonus One')
-        .setDescription(selectedQuestions.bonuses[n].formatted_leadin + ' ' +
-            selectedQuestions.bonuses[n].formatted_texts[0])
+        .setDescription(userData[message.author.id].color.part1 + selectedQuestions.bonuses[n].formatted_leadin + ' ' +
+            selectedQuestions.bonuses[n].formatted_texts[0] + userData[message.author.id].color.part2)
         .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
     message.channel.send(firstEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
@@ -21,18 +21,28 @@ function firstPart(message, prefix, userData, selectedQuestions) {
         let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
-        } else if (message.content == prefix + 'skip') {
-            collector.stop();
-            firstPart(message, prefix, userData, selectedQuestions);
         } else if (userData[message.author.id].playing === 'no') {
             collector.stop();
+        } else if (message.content == prefix + 'skip') {
+            collector.stop();
+            firstPart(message, prefix, userData, selectedQuestions, ratings);
         } else if (message.content == prefix + 'pause') {
             userData[message.author.id].paused = 'yes';
+            message.channel.send('The game has been paused.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
         } else if (message.content == prefix + 'play') {
-            userData[message.author.id].paused = 'no'
+            userData[message.author.id].paused = 'no';
+            message.channel.send('The game has been restarted.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+        } else if (collectorArgs[0] === '_ ') {
         } else if (userData[message.author.id].paused === 'no') {
+            if (!ratings[selectedQuestions.bonuses[n].answers[0]]) {
+                ratings[selectedQuestions.bonuses[n].answers[0]] = {}
+                if(!ratings[selectedQuestions.bonuses[n].answers[0]][message.content] && message.content.length > 2) {
+                    ratings[selectedQuestions.bonuses[n].answers[0]][message.content] = 0
+                }
+                fs.writeFileSync('./data/ratings.json', JSON.stringify(ratings, null, 4))
+            }
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
@@ -77,19 +87,19 @@ function firstPart(message, prefix, userData, selectedQuestions) {
             }
             userData[message.author.id].parts++
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-            secondPart(message, prefix, userData, n, selectedQuestions);
+            secondPart(message, prefix, userData, n, selectedQuestions, ratings);
             collector.stop()
         }
     });
 }
 
-function secondPart(message, prefix, userData, n, selectedQuestions) {
+function secondPart(message, prefix, userData, n, selectedQuestions, ratings) {
     wikipedia.search(selectedQuestions.bonuses[n].answers[1], message.author, userData);
     let secondEmbed = new Discord.MessageEmbed()
-        .setColor('#f5f5f5')
+        .setColor(userData[message.author.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
         .setTitle('Bonus Two')
-        .setDescription(selectedQuestions.bonuses[n].formatted_texts[1])
+        .setDescription(userData[message.author.id].color.part1 + selectedQuestions.bonuses[n].formatted_texts[1] + userData[message.author.id].color.part2)
         .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
     message.channel.send(secondEmbed);
 
@@ -98,18 +108,28 @@ function secondPart(message, prefix, userData, n, selectedQuestions) {
         let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
-        } else if (message.content == prefix + 'skip') {
-            collector.stop();
-            firstPart(message, prefix, userData, selectedQuestions);
         } else if (userData[message.author.id].playing === 'no') {
             collector.stop();
+        } else if (message.content == prefix + 'skip') {
+            collector.stop();
+            firstPart(message, prefix, userData, selectedQuestions, ratings);
         } else if (message.content == prefix + 'pause') {
             userData[message.author.id].paused = 'yes';
+            message.channel.send('The game has been paused.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
         } else if (message.content == prefix + 'play') {
-            userData[message.author.id].paused = 'no'
+            userData[message.author.id].paused = 'no';
+            message.channel.send('The game has been restarted.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+        } else if (collectorArgs[0] === '_ ') {
         } else if (userData[message.author.id].paused === 'no') {
+            if (!ratings[selectedQuestions.bonuses[n].answers[1]]) {
+                ratings[selectedQuestions.bonuses[n].answers[1]] = {}
+                if(!ratings[selectedQuestions.bonuses[n].answers[1]][message.content] && message.content.length > 2) {
+                    ratings[selectedQuestions.bonuses[n].answers[1]][message.content] = 0
+                }
+                fs.writeFileSync('./data/ratings.json', JSON.stringify(ratings, null, 4))
+            }
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[1].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
@@ -155,19 +175,19 @@ function secondPart(message, prefix, userData, n, selectedQuestions) {
             }
             userData[message.author.id].parts++
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-            thirdPart(message, prefix, userData, n, selectedQuestions);
+            thirdPart(message, prefix, userData, n, selectedQuestions, ratings);
             collector.stop()
         }
     });
 }
 
-function thirdPart(message, prefix, userData, n, selectedQuestions) {
+function thirdPart(message, prefix, userData, n, selectedQuestions, ratings) {
     wikipedia.search(selectedQuestions.bonuses[n].answers[2], message.author, userData);
     let thirdEmbed = new Discord.MessageEmbed()
-        .setColor('#f5f5f5')
+        .setColor(userData[message.author.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
         .setTitle('Bonus Three')
-        .setDescription(selectedQuestions.bonuses[n].formatted_texts[2])
+        .setDescription(userData[message.author.id].color.part1 + selectedQuestions.bonuses[n].formatted_texts[2] + userData[message.author.id].color.part2)
         .setFooter(userData[message.author.id].points + ' points in ' + userData[message.author.id].parts + ' bonus parts');
     message.channel.send(thirdEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
@@ -175,19 +195,28 @@ function thirdPart(message, prefix, userData, n, selectedQuestions) {
         let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
-        } else if (message.content == prefix + 'skip') {
-            collector.stop();
-            firstPart(message, prefix, userData, selectedQuestions);
         } else if (userData[message.author.id].playing === 'no') {
             collector.stop();
+        } else if (message.content == prefix + 'skip') {
+            collector.stop();
+            firstPart(message, prefix, userData, selectedQuestions, ratings);
         } else if (message.content == prefix + 'pause') {
             userData[message.author.id].paused = 'yes';
+            message.channel.send('The game has been paused.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
         } else if (message.content == prefix + 'play') {
-            userData[message.author.id].paused = 'no'
+            userData[message.author.id].paused = 'no';
+            message.channel.send('The game has been restarted.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+        } else if (collectorArgs[0] === '_ ') {
         } else if (userData[message.author.id].paused === 'no') {
-
+            if (!ratings[selectedQuestions.bonuses[n].answers[2]]) {
+                ratings[selectedQuestions.bonuses[n].answers[2]] = {}
+                if(!ratings[selectedQuestions.bonuses[n].answers[2]][message.content] && message.content.length > 2) {
+                    ratings[selectedQuestions.bonuses[n].answers[2]][message.content] = 0
+                }
+                fs.writeFileSync('./data/ratings.json', JSON.stringify(ratings, null, 4))
+            }
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
@@ -232,10 +261,10 @@ function thirdPart(message, prefix, userData, n, selectedQuestions) {
             }
             userData[message.author.id].parts++
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-            firstPart(message, prefix, userData, selectedQuestions);
+            firstPart(message, prefix, userData, selectedQuestions, ratings);
             collector.stop()
         }
     });
 }
 
-module.exports = { firstPart }
+module.exports = {firstPart}

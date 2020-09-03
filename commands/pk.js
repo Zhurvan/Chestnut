@@ -7,7 +7,7 @@ const multi = require('../scripts/multiPlayer');
 module.exports = {
     name: 'pk',
     description: 'Starts the pk',
-    execute(message, args, prefix, questions, userData, userQuestions) {
+    execute(message, args, prefix, questions, userData, userQuestions, ratings) {
         if (args[0]) {
             if (message.mentions.members.first()) {
                 if (message.mentions.members.first().user.bot) {
@@ -68,10 +68,10 @@ module.exports = {
                     if (userQuestions[message.author.id].bonuses[0] === 'all') {
                         console.log('ok')
                         let selectedQuestions = questions.data;
-                        single.firstPart(message, prefix, userData, selectedQuestions);
+                        single.firstPart(message, prefix, userData, selectedQuestions, ratings);
                     } else {
                         let selectedQuestions = userQuestions[message.author.id];
-                        single.firstPart(message, prefix, userData, selectedQuestions);
+                        single.firstPart(message, prefix, userData, selectedQuestions, ratings);
                     }
                 }
             } else {
