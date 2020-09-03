@@ -19,8 +19,8 @@ The table below displays the advantages and disadvantages to using each as of 08
 | Multiplayer pks           | ✔️      | <a href="#footnote1">✔️<sup>*</sup></a>             | <a href="#footnote1">✔️<sup>*</sup></a>                |
 | Choosing Difficulty       | ✔️      | ✔️             | ✔️                |
 | Choosing Category         | ✔️      | ✔️             | ✔️                |
-| Choosing Tournament       |        | ✔️             | ✔️                |
-| Choosing Year             |        | ✔️             | ✔️                |
+| Choosing Tournament       |    ✔️    | ✔️             | ✔️                |
+| Choosing Year             |       ✔️ | ✔️             | ✔️                |
 | Choosing Multiple Filters | ✔️      |               | ✔️                |
 | Changing Distribution     |        |               | ✔️                |
 | Wikipedia Links           | <a href="footnote2">✔️<sup>†</sup></a>      | <a href="footnote2">✔️<sup>†</sup></a>           | <a href="footnote2">✔️<sup>†</sup></a>                |
