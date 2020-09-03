@@ -25,7 +25,7 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            ffirstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
         } else if (userData[player.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
@@ -104,7 +104,7 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            ffirstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
         } else if (userData[player.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
@@ -184,7 +184,7 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            ffirstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
         } else if (userData[player.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
