@@ -1,6 +1,7 @@
 # pk-bot
 
 ### [Invite Link](https://discord.com/oauth2/authorize?client_id=745454805954199683&scope=bot&permissions=3136)
+### [Discord Server Invite Link](https://discord.gg/EgVTQfr)
 Discord bot for Quizbowl pks.
 
 This bot was made to remedy some features that I thought were basic to studying but locked behind a paywall in Everclue in addition to the fact that the multiplayer functionality on Everclue was bugged. 
