@@ -1,4 +1,4 @@
-# pk-bot
+# Chestnut Bot
 
 ### [Invite Link](https://discord.com/oauth2/authorize?client_id=745454805954199683&scope=bot&permissions=3136)
 ### [Discord Server Invite Link](https://discord.gg/EgVTQfr)
