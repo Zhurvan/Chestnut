@@ -42,7 +42,7 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
                     .setTitle('🟢 Correct')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[player.id].link + ') \n\nReact with the given emoji to override the decision')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {
                     embedMessage.react('❌');
@@ -67,7 +67,7 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
                 var incorrectEmbed = new Discord.MessageEmbed()
                     .setColor('#f72843')
                     .setTitle('🔴 Incorrect')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[player.id].link + ') \n\nReact with the given emoji to override the decision')
                 userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[0]);
                 message.channel.send(incorrectEmbed).then(embedMessage => {
                     embedMessage.react('✅');
@@ -133,7 +133,7 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
                     .setTitle('🟢 Correct')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[player.id].link + ') \n\nReact with the given emoji to override the decision')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {
                     embedMessage.react('❌');
@@ -160,7 +160,7 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
                 var incorrectEmbed = new Discord.MessageEmbed()
                     .setColor('#f72843')
                     .setTitle('🔴 Incorrect')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[player.id].link + ') \n\nReact with the given emoji to override the decision')
                 userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[1]);
                 message.channel.send(incorrectEmbed).then(embedMessage => {
                     embedMessage.react('✅');
@@ -226,7 +226,7 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
                     .setTitle('🟢 Correct')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[player.id].link + ') \n\nReact with the given emoji to override the decision')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {
                     embedMessage.react('❌');
@@ -253,7 +253,7 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
                 var incorrectEmbed = new Discord.MessageEmbed()
                     .setColor('#f72843')
                     .setTitle('🔴 Incorrect')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[player.id].link + ') \n\nReact with the given emoji to override the decision')
                 userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[2]);
                 message.channel.send(incorrectEmbed).then(embedMessage => {
                     embedMessage.react('✅');
