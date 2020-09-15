@@ -4,7 +4,7 @@ const dice = require('dice-coefficient');
 const replace = require('./replace');
 const wikipedia = require('./wikipedia');
 
-function firstPart(message, prefix, player, userData, userQuestions, selectedQuestions) {
+function firstPart(message, prefix, player, userData, userQuestions, selectedQuestions, userAnswers) {
     let n = Math.floor((Math.random() * selectedQuestions.bonuses.length));
     replace.strings(n, selectedQuestions);
     wikipedia.search(selectedQuestions.bonuses[n].answers[0], player, userData);
@@ -25,67 +25,79 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions, userAnswers);
         } else if (userData[player.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
-            userData[message.author.id].paused = 'yes';
+            userData[player.id].paused = 'yes';
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
         } else if (message.content == prefix + 'play') {
-            userData[message.author.id].paused = 'no'
+            userData[player.id].paused = 'no'
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (userData[message.author.id].paused === 'no') {
+        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.includes(prefix + 'color')) {
+            message.channel.send('You cannot change colors while in a pk!');
+        } else if (userData[player.id].paused === 'no') {
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[0].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
                     .setTitle('🟢 Correct')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {
-                    embedMessage.react('✅');
                     embedMessage.react('❌');
                     let filter = (reaction, user) => {
-                        return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        return (reaction.emoji.name === '❌') && user.id === player.id;
                     };
-                    let reactionCollector = embedMessage.createReactionCollector(filter);
+                    let reactionCollector = embedMessage.createReactionCollector(filter, {dispose: true});
                     reactionCollector.on('collect', (reaction, user) => {
-                        if (reaction.emoji.name === '❌') {
-                            userData[player.id].points -= 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        userData[player.id].points -= 10;
+                        if (!userAnswers[player.id].indexOf(selectedQuestions.bonuses.answers[0])) {
+                            userAnswers[player.id].push(selectedQuestions.bonuses.answers[0]);
                         }
-                        reactionCollector.stop();
+                    });
+                    reactionCollector.on('remove', (reaction, user) => {
+                        userData[player.id].points += 10;
+                        if (userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[0])) {
+                            userAnswers[player.id].splice(userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[0]));
+                        }
                     });
                 });
             } else {
                 var incorrectEmbed = new Discord.MessageEmbed()
                     .setColor('#f72843')
                     .setTitle('🔴 Incorrect')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[0] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[0]);
                 message.channel.send(incorrectEmbed).then(embedMessage => {
                     embedMessage.react('✅');
-                    embedMessage.react('❌');
                     let filter = (reaction, user) => {
-                        return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        return (reaction.emoji.name === '✅') && user.id === player.id;
                     };
-                    let reactionCollector = embedMessage.createReactionCollector(filter);
+                    let reactionCollector = embedMessage.createReactionCollector(filter, {dispose: true});
                     reactionCollector.on('collect', (reaction, user) => {
-                        if (reaction.emoji.name === '✅') {
-                            userData[player.id].points += 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        userData[player.id].points += 10;
+                        if (userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[0])) {
+                            userAnswers[player.id].splice(userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[0]));
                         }
-                        reactionCollector.stop();
+                    });
+                    reactionCollector.on('remove', (reaction, user) => {
+                        userData[player.id].points -= 10;
+                        if (!userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[0])) {
+                            userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[0]);
+                        }
                     });
                 });
             }
             userData[player.id].parts++
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-            secondPart(message, prefix, player, userData, userQuestions, n, selectedQuestions);
+            secondPart(message, prefix, player, userData, userQuestions, n, selectedQuestions, userAnswers);
             collector.stop();
         }
     });
 }
 
-function secondPart(message, prefix, player, userData, userQuestions, n, selectedQuestions) {
+function secondPart(message, prefix, player, userData, userQuestions, n, selectedQuestions, userAnswers) {
     wikipedia.search(selectedQuestions.bonuses[n].answers[1], player, userData);
     let secondEmbed = new Discord.MessageEmbed()
         .setColor(userData[player.id].color.bar.value)
@@ -104,69 +116,82 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions, userAnswers);
         } else if (userData[player.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
-            userData[message.author.id].paused = 'yes';
+            userData[player.id].paused = 'yes';
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
         } else if (message.content == prefix + 'play') {
-            userData[message.author.id].paused = 'no'
+            userData[player.id].paused = 'no'
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (userData[message.author.id].paused === 'no') {
+        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.includes(prefix + 'color')) {
+            message.channel.send('You cannot change colors while in a pk!');
+        } else if (userData[player.id].paused === 'no') {
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[1].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
                     .setTitle('🟢 Correct')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {
-                    embedMessage.react('✅');
                     embedMessage.react('❌');
                     let filter = (reaction, user) => {
-                        return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        return (reaction.emoji.name === '❌') && user.id === player.id;
                     };
-                    let reactionCollector = embedMessage.createReactionCollector(filter);
+                    let reactionCollector = embedMessage.createReactionCollector(filter, {dispose: true});
                     reactionCollector.on('collect', (reaction, user) => {
-                        if (reaction.emoji.name === '❌') {
-                            userData[player.id].points -= 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        userData[player.id].points -= 10;
+                        if (!userAnswers[player.id].indexOf(selectedQuestions.bonuses.answers[1])) {
+                            userAnswers[player.id].push(selectedQuestions.bonuses.answers[1]);
                         }
-                        reactionCollector.stop();
+                        fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                    });
+                    reactionCollector.on('remove', (reaction, user) => {
+                        userData[player.id].points += 10;
+                        if (userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[1])) {
+                            userAnswers[player.id].splice(userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[1]));
+                        }
+                        fs.writeFileSync('./data/users.json', JSON.stringify(userData));
                     });
                 });
-
             } else {
                 var incorrectEmbed = new Discord.MessageEmbed()
                     .setColor('#f72843')
                     .setTitle('🔴 Incorrect')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[1] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[1]);
                 message.channel.send(incorrectEmbed).then(embedMessage => {
                     embedMessage.react('✅');
-                    embedMessage.react('❌');
                     let filter = (reaction, user) => {
-                        return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        return (reaction.emoji.name === '✅') && user.id === player.id;
                     };
-                    let reactionCollector = embedMessage.createReactionCollector(filter);
+                    let reactionCollector = embedMessage.createReactionCollector(filter, {dispose: true});
                     reactionCollector.on('collect', (reaction, user) => {
-                        if (reaction.emoji.name === '✅') {
-                            userData[player.id].points += 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        userData[player.id].points += 10;
+                        if (userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[1])) {
+                            userAnswers[player.id].splice(userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[1]));
                         }
-                        reactionCollector.stop();
+                    });
+                    reactionCollector.on('remove', (reaction, user) => {
+                        userData[player.id].points -= 10;
+                        if (!userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[1])) {
+                            userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[1]);
+                        }
                     });
                 });
             }
             userData[player.id].parts++
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-            thirdPart(message, prefix, player, userData, userQuestions, n, selectedQuestions);
+            thirdPart(message, prefix, player, userData, userQuestions, n, selectedQuestions, userAnswers);
             collector.stop();
         }
     });
 }
 
-function thirdPart(message, prefix, player, userData, userQuestions, n, selectedQuestions) {
-    wikipedia.search(selectedQuestions.bonuses[n].answers[2], player);
+function thirdPart(message, prefix, player, userData, userQuestions, n, selectedQuestions, userAnswers) {
+    wikipedia.search(selectedQuestions.bonuses[n].answers[2], player, userData);
     let thirdEmbed = new Discord.MessageEmbed()
         .setColor(userData[player.id].color.bar.value)
         .setAuthor(selectedQuestions.bonuses[n].tournament.name + ' | ' + selectedQuestions.bonuses[n].category.name)
@@ -184,55 +209,69 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions, userAnswers);
         } else if (userData[player.id].playing === 'no') {
             collector.stop();
         } else if (message.content == prefix + 'pause') {
-            userData[message.author.id].paused = 'yes';
+            userData[player.id].paused = 'yes';
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
         } else if (message.content == prefix + 'play') {
-            userData[message.author.id].paused = 'no'
+            userData[player.id].paused = 'no'
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (userData[message.author.id].paused === 'no') {
+        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.includes(prefix + 'color')) {
+            message.channel.send('You cannot change colors while in a pk!');
+        } else if (userData[player.id].paused === 'no') {
             if (dice(message.content.toLowerCase(), selectedQuestions.bonuses[n].answers[2].toLowerCase()) > 0.4) {
                 var correctEmbed = new Discord.MessageEmbed()
                     .setColor('#53d645')
                     .setTitle('🟢 Correct')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
                 userData[player.id].points += 10;
                 message.channel.send(correctEmbed).then(embedMessage => {
-                    embedMessage.react('✅');
                     embedMessage.react('❌');
                     let filter = (reaction, user) => {
-                        return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        return (reaction.emoji.name === '❌') && user.id === player.id;
                     };
-                    let reactionCollector = embedMessage.createReactionCollector(filter);
+                    let reactionCollector = embedMessage.createReactionCollector(filter, {dispose: true});
                     reactionCollector.on('collect', (reaction, user) => {
-                        if (reaction.emoji.name === '❌') {
-                            userData[player.id].points -= 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        userData[player.id].points -= 10;
+                        if (!userAnswers[player.id].indexOf(selectedQuestions.bonuses.answers[2])) {
+                            userAnswers[player.id].push(selectedQuestions.bonuses.answers[2]);
                         }
-                        reactionCollector.stop();
+                        fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                    });
+                    reactionCollector.on('remove', (reaction, user) => {
+                        userData[player.id].points += 10;
+                        if (userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[2])) {
+                            userAnswers[player.id].splice(userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[2]));
+                        }
+                        fs.writeFileSync('./data/users.json', JSON.stringify(userData));
                     });
                 });
             } else {
                 var incorrectEmbed = new Discord.MessageEmbed()
                     .setColor('#f72843')
                     .setTitle('🔴 Incorrect')
-                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[message.author.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                    .setDescription('[' + selectedQuestions.bonuses[n].formatted_answers[2] + '](' + userData[player.id].link + ') \n\nReact ✅ or ❌ to override the decision This can only be done once')
+                userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[2]);
                 message.channel.send(incorrectEmbed).then(embedMessage => {
                     embedMessage.react('✅');
-                    embedMessage.react('❌');
                     let filter = (reaction, user) => {
-                        return (reaction.emoji.name === '✅' || reaction.emoji.name === '❌') && user.id === player.id;
+                        return (reaction.emoji.name === '✅') && user.id === player.id;
                     };
-                    let reactionCollector = embedMessage.createReactionCollector(filter);
+                    let reactionCollector = embedMessage.createReactionCollector(filter, {dispose: true});
                     reactionCollector.on('collect', (reaction, user) => {
-                        if (reaction.emoji.name === '✅') {
-                            userData[player.id].points += 10;
-                            fs.writeFileSync('./data/users.json', JSON.stringify(userData));
+                        userData[player.id].points += 10;
+                        if (userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[2])) {
+                            userAnswers[player.id].splice(userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[2]));
                         }
-                        reactionCollector.stop();
+                    });
+                    reactionCollector.on('remove', (reaction, user) => {
+                        userData[player.id].points -= 10;
+                        if (!userAnswers[player.id].indexOf(selectedQuestions.bonuses[n].answers[2])) {
+                            userAnswers[player.id].push(selectedQuestions.bonuses[n].answers[2]);
+                        }
                     });
                 });
             }
@@ -241,7 +280,7 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
             player = userData[player.id].playing.with;
             player.id = player.userID;
             selectedQuestions = userQuestions[player.id];
-            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+            firstPart(message, prefix, player, userData, userQuestions, selectedQuestions, userAnswers);
             collector.stop()
         }
     });

@@ -3,11 +3,11 @@ const fetch = require('node-fetch');
 const reload = require('./reload');
 
 function search(answer, player, userData) {
+    userData[player.id].link = ''
     const endpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&prop=info&inprop=url&utf8=&format=json&origin=*&srlimit=20&srsearch=${answer}`;
     return fetch(endpoint)
         .then(response => response.json())
         .then(data => {
-            userData[player.id].link = ''
             const results = data.query.search;
             let result = results[0]
             userData[player.id].link = encodeURI(`https://en.wikipedia.org/wiki/${result.title}`);

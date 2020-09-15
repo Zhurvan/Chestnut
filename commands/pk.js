@@ -1,13 +1,12 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const reload = require('../scripts/reload')
 const single = require('../scripts/singlePlayer');
 const multi = require('../scripts/multiPlayer');
 
 module.exports = {
     name: 'pk',
     description: 'Starts the pk',
-    execute(message, args, prefix, questions, userData, userQuestions, ratings) {
+    execute(message, args, prefix, questions, userData, userQuestions, ratings, userAnswers) {
         if (args[0]) {
             if (message.mentions.members.first()) {
                 if (message.mentions.members.first().user.bot) {
@@ -44,7 +43,7 @@ module.exports = {
                                             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
                                             let player = message.guild.members.cache.get(message.author.id)
                                             let selectedQuestions = userQuestions[player.id];
-                                            multi.firstPart(message, prefix, player, userData, userQuestions, selectedQuestions);
+                                            multi.firstPart(message, prefix, player, userData, userQuestions, selectedQuestions, userAnswers);
                                         }
                                         pkWithReactionCollector.stop();
                                     });
@@ -68,10 +67,10 @@ module.exports = {
                     if (userQuestions[message.author.id].bonuses[0] === 'all') {
                         console.log('ok')
                         let selectedQuestions = questions.data;
-                        single.firstPart(message, prefix, userData, selectedQuestions, ratings);
+                        single.firstPart(message, prefix, userData, selectedQuestions, ratings, userAnswers);
                     } else {
                         let selectedQuestions = userQuestions[message.author.id];
-                        single.firstPart(message, prefix, userData, selectedQuestions, ratings);
+                        single.firstPart(message, prefix, userData, selectedQuestions, ratings, userAnswers);
                     }
                 }
             } else {

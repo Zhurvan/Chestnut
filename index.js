@@ -2,6 +2,9 @@ const fs = require('fs');
 const cjson = require('compressed-json');
 const reload = require('./scripts/reload');
 const Discord = require('discord.js');
+const config = require('./config.json');
+const Gists = require('gists');
+const gists = new Gists({ username: config.githubUsername, password: config.githubPassword });
 
 let prefix;
 
@@ -17,6 +20,9 @@ console.log('Guild Data Loaded');
 let userQuestionsData = fs.readFileSync('./data/userQuestions.json');
 let userQuestions = JSON.parse(userQuestionsData);
 console.log('User Questions Loaded');
+let userAnswersData = fs.readFileSync('./data/userAnswers.json');
+let userAnswers = JSON.parse(userAnswersData);
+console.log('User Answers Loaded');
 let ratingsData = fs.readFileSync('./data/ratings.json');
 let ratings = JSON.parse(ratingsData);
 console.log('Question Ratings Loaded');
@@ -75,17 +81,24 @@ client.on('message', message => {
             fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
         }
 
+        function initUserAnswersData() {
+            userAnswers[message.author.id] = [];
+            fs.writeFileSync('./data/userAnswers.json', JSON.stringify(userAnswers));
+        }
+
         function initGuildData() {
             guildData[message.guild.id] = {};
             guildData[message.guild.id].prefix = '+';
             fs.writeFileSync('./data/guilds.json', JSON.stringify(guildData));
         }
-
         if (!userData[message.author.id] && !message.author.bot) {
             initUserData();
         }
         if (!userQuestions[message.author.id] && !message.author.bot) {
             initUserQuestionData();
+        }
+        if (!userAnswers[message.author.id] && !message.author.bot) {
+            initUserAnswersData();
         }
         if (message.channel instanceof Discord.DMChannel) {
             prefix = '+';
@@ -119,6 +132,10 @@ client.on('message', message => {
                     userQuestions[message.mentions.members.first().id].bonusesTemp = [];
                     fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
                 }
+                if (!userAnswers[message.mentions.members.first().id]) {
+                    userAnswers[message.mentions.members.first().id] = {}
+                    fs.writeFileSync('./data/userAnswers.json', JSON.stringify(userAnswers));
+                }
             }
 
             prefix = guildData[message.guild.id].prefix;
@@ -142,13 +159,15 @@ client.on('message', message => {
                     client.commands.get('help').execute(message, prefix);
                     break;
                 case 'pk':
-                    client.commands.get('pk').execute(message, args, prefix, questions, userData, userQuestions, ratings);
+                    client.commands.get('pk').execute(message, args, prefix, questions, userData, userQuestions, ratings, userAnswers);
                     break;
                 case 'end':
-                    client.commands.get('end').execute(message, userData);
+                    client.commands.get('end').execute(message, userData, userAnswers, gists);
                     break;
                 case 'color':
-                    client.commands.get('color').execute(message, args, userData);
+                    if(userData[message.author.id].playing === 'no') {
+                        client.commands.get('color').execute(message, args, userData);
+                    }
                     break;
                 case 'c':
                     client.commands.get('color').execute(message, args, userData);
@@ -170,5 +189,6 @@ process.on('uncaughtException', function (e) {
     process.exit(1);
 });
 
-
-client.login(TOKEN);
+fs.readFile('token.txt', 'utf-8', function(err, token) {
+    client.login(config.discordKey);
+});

@@ -19,8 +19,10 @@
   "homepage": "https://github.com/Bubblebyb/Unnamed-project#readme",
   "dependencies": {
     "compressed-json": "^1.0.15",
+    "create-gist": "^1.0.0",
     "dice-coefficient": "^1.0.5",
     "discord.js": "^12.3.1",
+    "gists": "^2.0.0",
     "node-fetch": "^2.6.0",
     "ntc": "0.0.1"
   }
