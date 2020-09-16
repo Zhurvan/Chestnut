@@ -147,7 +147,12 @@ client.on('message', message => {
         if (isCommand) {
             switch (command) {
                 case 'prefix':
-                    client.commands.get('prefix').execute(message, args, guildData, prefix);
+                    if (message.channel instanceof Discord.DMChannel) {
+                        message.channel.send('The current prefix is `+`')
+                    }
+                    else {
+                        client.commands.get('prefix').execute(message, args, guildData, prefix);
+                    }
                     break;
                 case 'params':
                     client.commands.get('params').execute(message, args, questions, userData, userQuestions);
