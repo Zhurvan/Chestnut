@@ -4,12 +4,12 @@ const reload = require('./scripts/reload');
 const Discord = require('discord.js');
 const config = require('./config.json');
 const Gists = require('gists');
-const gists = new Gists({ username: config.githubUsername, password: config.githubPassword });
+const gists = new Gists({username: config.githubUsername, password: config.githubPassword});
 
 let prefix;
 
 let questionsData = fs.readFileSync('./data/questions.json');
-let questions = cjson.decompress(JSON.parse(questionsData)).questions;
+let questions = cjson.decompress(JSON.parse(questionsData));
 console.log('Questions Loaded');
 let userFile = fs.readFileSync('./data/users.json');
 let userData = JSON.parse(userFile);
@@ -17,16 +17,13 @@ console.log('User Data Loaded');
 let guildFile = fs.readFileSync('./data/guilds.json');
 let guildData = JSON.parse(guildFile);
 console.log('Guild Data Loaded');
-let userQuestionsData = fs.readFileSync('./data/userQuestions.json');
-let userQuestions = JSON.parse(userQuestionsData);
-console.log('User Questions Loaded');
 let userAnswersData = fs.readFileSync('./data/userAnswers.json');
 let userAnswers = JSON.parse(userAnswersData);
 console.log('User Answers Loaded');
 let ratingsData = fs.readFileSync('./data/ratings.json');
 let ratings = JSON.parse(ratingsData);
 console.log('Question Ratings Loaded');
-
+let userQuestions = {};
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -78,7 +75,6 @@ client.on('message', message => {
             userQuestions[message.author.id] = {};
             userQuestions[message.author.id].bonuses = [];
             userQuestions[message.author.id].bonusesTemp = [];
-            fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
         }
 
         function initUserAnswersData() {
@@ -91,6 +87,7 @@ client.on('message', message => {
             guildData[message.guild.id].prefix = '+';
             fs.writeFileSync('./data/guilds.json', JSON.stringify(guildData));
         }
+
         if (!userData[message.author.id] && !message.author.bot) {
             initUserData();
         }
@@ -130,10 +127,10 @@ client.on('message', message => {
                     userQuestions[message.mentions.members.first().id] = {};
                     userQuestions[message.mentions.members.first().id].bonuses = [];
                     userQuestions[message.mentions.members.first().id].bonusesTemp = [];
-                    fs.writeFileSync('./data/userQuestions.json', JSON.stringify(userQuestions));
+
                 }
                 if (!userAnswers[message.mentions.members.first().id]) {
-                    userAnswers[message.mentions.members.first().id] = {}
+                    userAnswers[message.mentions.members.first().id] = [];
                     fs.writeFileSync('./data/userAnswers.json', JSON.stringify(userAnswers));
                 }
             }
@@ -149,8 +146,7 @@ client.on('message', message => {
                 case 'prefix':
                     if (message.channel instanceof Discord.DMChannel) {
                         message.channel.send('The current prefix is `+`')
-                    }
-                    else {
+                    } else {
                         client.commands.get('prefix').execute(message, args, guildData, prefix);
                     }
                     break;
@@ -170,7 +166,7 @@ client.on('message', message => {
                     client.commands.get('end').execute(message, userData, userAnswers, gists);
                     break;
                 case 'color':
-                    if(userData[message.author.id].playing === 'no') {
+                    if (userData[message.author.id].playing === 'no') {
                         client.commands.get('color').execute(message, args, userData);
                     }
                     break;
@@ -178,12 +174,12 @@ client.on('message', message => {
                     client.commands.get('color').execute(message, args, userData);
             }
         } else {
-            switch (command) {
-                case 'prefix':
+            switch (message.content) {
+                case '+prefix':
                     message.channel.send('The current prefix is `' + prefix + '`');
                     break;
-                case 'help':
-                    client.commands.get('help').execute(message);
+                case '+help':
+                    client.commands.get('help').execute(message, prefix);
             }
         }
     }
@@ -194,6 +190,6 @@ process.on('uncaughtException', function (e) {
     process.exit(1);
 });
 
-fs.readFile('token.txt', 'utf-8', function(err, token) {
+fs.readFile('token.txt', 'utf-8', function (err, token) {
     client.login(config.discordKey);
 });
