@@ -18,7 +18,6 @@ function firstPart(message, prefix, userData, selectedQuestions, ratings, userAn
     message.channel.send(firstEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
     collector.on('collect', message => {
-        let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
         } else if (userData[message.author.id].playing === 'no') {
@@ -34,7 +33,7 @@ function firstPart(message, prefix, userData, selectedQuestions, ratings, userAn
             userData[message.author.id].paused = 'no';
             message.channel.send('The game has been restarted.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.startsWith('_ ')) {
         } else if (message.content.includes(prefix + 'color')) {
             message.channel.send('You cannot change colors while in a pk!');
         } else if (userData[message.author.id].paused === 'no') {
@@ -117,7 +116,6 @@ function secondPart(message, prefix, userData, n, selectedQuestions, ratings, us
 
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
     collector.on('collect', message => {
-        let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
         } else if (userData[message.author.id].playing === 'no') {
@@ -133,7 +131,7 @@ function secondPart(message, prefix, userData, n, selectedQuestions, ratings, us
             userData[message.author.id].paused = 'no';
             message.channel.send('The game has been restarted.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.startsWith('_ ')) {
         } else if (message.content.includes(prefix + 'color')) {
             message.channel.send('You cannot change colors while in a pk!');
         } else if (userData[message.author.id].paused === 'no') {
@@ -217,7 +215,6 @@ function thirdPart(message, prefix, userData, n, selectedQuestions, ratings, use
     message.channel.send(thirdEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
     collector.on('collect', message => {
-        let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
         } else if (userData[message.author.id].playing === 'no') {
@@ -233,7 +230,7 @@ function thirdPart(message, prefix, userData, n, selectedQuestions, ratings, use
             userData[message.author.id].paused = 'no';
             message.channel.send('The game has been restarted.')
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.startsWith('_ ')) {
         } else if (message.content.includes(prefix + 'color')) {
             message.channel.send('You cannot change colors while in a pk!');
         } else if (userData[message.author.id].paused === 'no') {

@@ -17,7 +17,6 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
     message.channel.send(firstEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
     collector.on('collect', message => {
-        let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
         } else if (message.content == prefix + 'skip') {
@@ -34,7 +33,7 @@ function firstPart(message, prefix, player, userData, userQuestions, selectedQue
         } else if (message.content == prefix + 'play') {
             userData[player.id].paused = 'no'
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.startsWith('_ ')) {
         } else if (message.content.includes(prefix + 'color')) {
             message.channel.send('You cannot change colors while in a pk!');
         } else if (userData[player.id].paused === 'no') {
@@ -108,7 +107,6 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
     message.channel.send(secondEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
     collector.on('collect', message => {
-        let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
         } else if (message.content == prefix + 'skip') {
@@ -125,7 +123,7 @@ function secondPart(message, prefix, player, userData, userQuestions, n, selecte
         } else if (message.content == prefix + 'play') {
             userData[player.id].paused = 'no'
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.startsWith('_ ')) {
         } else if (message.content.includes(prefix + 'color')) {
             message.channel.send('You cannot change colors while in a pk!');
         } else if (userData[player.id].paused === 'no') {
@@ -201,7 +199,6 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
     message.channel.send(thirdEmbed);
     let collector = new Discord.MessageCollector(message.channel, m => m.author.id === player.id);
     collector.on('collect', message => {
-        let collectorArgs = message.content.split(/ +/);
         if (message.content == prefix + 'end') {
             collector.stop();
         } else if (message.content == prefix + 'skip') {
@@ -218,7 +215,7 @@ function thirdPart(message, prefix, player, userData, userQuestions, n, selected
         } else if (message.content == prefix + 'play') {
             userData[player.id].paused = 'no'
             fs.writeFileSync('./data/users.json', JSON.stringify(userData));
-        } else if (collectorArgs[0] === '_ ') {
+        } else if (message.content.startsWith('_ ')) {
         } else if (message.content.includes(prefix + 'color')) {
             message.channel.send('You cannot change colors while in a pk!');
         } else if (userData[player.id].paused === 'no') {
