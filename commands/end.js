@@ -67,7 +67,7 @@ module.exports = {
                         }
                     }
                 }).then(data => {
-                    message.channel.send('Missed answerlines for ' + userData[message.author.id].playing.with.displayName + ': ' + data..html_url)
+                    message.channel.send('Missed answerlines for ' + userData[message.author.id].playing.with.displayName + ': ' + data.html_url)
                     userAnswers[message.author.id] = [];
                     userAnswers[userData[message.author.id].playing.id] = []
                     userData[userData[message.author.id].playing.id].points = 0;
