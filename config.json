@@ -1,5 +1,4 @@
 {
   "discordKey": "Paste Bot Key Here",
-  "githubUsername": "Paste GitHub Username Here",
-  "githubPassword": "Paste GitHub Password Here"
+  "gistToken": "Paste GitHub Gists Token Here"
 }

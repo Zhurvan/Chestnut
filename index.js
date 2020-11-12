@@ -3,9 +3,8 @@ const cjson = require('compressed-json');
 const reload = require('./scripts/reload');
 const Discord = require('discord.js');
 const config = require('./config.json');
-const Gists = require('gists');
-const gists = new Gists({username: config.githubUsername, password: config.githubPassword});
-
+const GistClient = require("gist-client");
+const gists = new GistClient().setToken(config.gistToken);
 let prefix;
 
 let questionsData = fs.readFileSync('./data/questions.json');
@@ -38,11 +37,10 @@ for (const file of commandFiles) {
 client.on('ready', () => {
     console.log('Bot Started!');
     client.user.setPresence({
-        status: 'online',
+        status: "online",
         activity: {
-            name: '+help',
-            type: 'STREAMING',
-            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+            name: "+help",
+            type: "PLAYING"
         }
     });
 });

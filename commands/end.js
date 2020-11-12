@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const reload = require('../scripts/reload')
+const reload = require('../scripts/reload');
 
 module.exports = {
     name: 'end',
@@ -23,7 +23,7 @@ module.exports = {
                         "content": JSON.stringify(userAnswers[message.author.id]).replace(/",/g, '"\n').replace(/\[/g, '').replace(/]/g, '')
                     }
                 }
-            }).then(data => message.channel.send(data.body.html_url))
+            }).then(data => message.channel.send(data.html_url))
             userAnswers[message.author.id] = [];
             fs.writeFileSync('./data/userAnswers.json', JSON.stringify(userAnswers));
             userData[message.author.id].points = 0;
@@ -56,7 +56,7 @@ module.exports = {
                         "content": JSON.stringify(userAnswers[message.author.id]).replace(/",/g, '"\n').replace(/\[/g, '').replace(/]/g, '')
                     }
                 }
-            }).then(data => message.channel.send('Missed Answerlines for ' + message.guild.members.cache.get(message.author.id).nickname + ': ' + data.body.html_url));
+            }).then(data => message.channel.send('Missed Answerlines for ' + message.guild.members.cache.get(message.author.id).nickname + ': ' + data.html_url));
             if (userAnswers[userData[message.author.id].playing.id].length > 0) {
                 gists.create({
                     "description": "Missed Answerlines",
@@ -67,7 +67,7 @@ module.exports = {
                         }
                     }
                 }).then(data => {
-                    message.channel.send('Missed answerlines for ' + userData[message.author.id].playing.with.displayName + ': ' + data.body.html_url)
+                    message.channel.send('Missed answerlines for ' + userData[message.author.id].playing.with.displayName + ': ' + data..html_url)
                     userAnswers[message.author.id] = [];
                     userAnswers[userData[message.author.id].playing.id] = []
                     userData[userData[message.author.id].playing.id].points = 0;
