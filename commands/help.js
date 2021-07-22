@@ -15,7 +15,7 @@ module.exports = {
                 '[`' + prefix + 'play`](https://github.com/Bubblebyb/pk-bot/wiki/Play): Unpauses the pk \n ' +
                 '[`' + prefix + 'end`](https://github.com/Bubblebyb/pk-bot/wiki/End): Ends the pk \n ' +
                 '[`' + prefix + 'color`](https://github.com/Bubblebyb/pk-bot/wiki/Color): Displays or changes the bar or text color')
-            .setFooter('Click on any of the commands to go to their wiki page')
+            .setFooter('Click on any of the commands to go to their wiki page \n note that Chestnut has been discontinued and this bot is likely being hosted by a third party.')
         message.channel.send(helpEmbed);
     },
 };
